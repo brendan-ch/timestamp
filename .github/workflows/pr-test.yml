@@ -40,7 +40,7 @@ jobs:
           security create-keychain -p "$MACOS_CI_KEYCHAIN_RANDOM_PWD" build.keychain
           security default-keychain -s build.keychain
           security unlock-keychain -p "$MACOS_CI_KEYCHAIN_RANDOM_PWD" build.keychain
-          security import certificate.p12 -k build.keychain -P "$MACOS_DEVELOPER_ID_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+          security import certificate.p12 -k build.keychain -P "$MACOS_DEVELOPER_ID_CERTIFICATE_PASSWORD" -T /usr/bin/xcodebuild -T /usr/bin/xcrun
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_CI_KEYCHAIN_RANDOM_PWD" build.keychain
 
 
