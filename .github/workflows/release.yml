@@ -14,7 +14,8 @@ jobs:
   release:
     name: Build and release new version
     runs-on: macos-26
-    
+    timeout-minutes: 30
+
     steps:
       - name: Checkout current repository
         uses: actions/checkout@v4
