@@ -18,6 +18,10 @@ jobs:
     steps:
       - name: Checkout current repository
         uses: actions/checkout@v4
+        
+      - name: Set version in Info.plist
+        run: |
+          /usr/libexec/Plistbuddy -c "Set CFBundleShortVersionString ${{ github.event.inputs.version }}" "Info.plist"
 
       - name: Build and export the app
         run: |
