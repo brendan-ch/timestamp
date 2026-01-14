@@ -19,19 +19,7 @@ jobs:
       - name: Checkout current repository
         uses: actions/checkout@v4
         
-      - name: Set version in Info.plist
-        run: |
-          /usr/libexec/Plistbuddy -c "Set CFBundleShortVersionString ${{ github.event.inputs.version }}" "Info.plist"
-
-      - name: Build and export the app
-        run: |
-          echo "Archive app"
-          xcodebuild archive -scheme Clockwise -archivePath ./output/Clockwise.xcarchive
-          
-          echo "Export .app from archive"
-          xcodebuild -archivePath ./output/Clockwise.xcarchive -exportArchive -exportPath ./output/Clockwise -exportOptionsPlist ExportOptions.plist
-      
-      - name: Codesign the app
+      - name: Import certificate into keychain
         env:
           # The base64-encoded certificate exported from Keychain Access
           MACOS_DEVELOPER_ID_CERTIFICATE_BASE64: ${{ secrets.MACOS_DEVELOPER_ID_CERTIFICATE_BASE64 }}
@@ -44,6 +32,7 @@ jobs:
           
           # A random password of choice
           MACOS_CI_KEYCHAIN_RANDOM_PWD: ${{ secrets.MACOS_CI_KEYCHAIN_RANDOM_PWD }}
+
         run: |
           # Turn our base64-encoded certificate back to a regular .p12 file
           
@@ -53,11 +42,31 @@ jobs:
           # with a UI dialog asking for the certificate password, which we can't
           # use in a headless CI environment
           
-          security create-keychain -p "$MACOS_CI_KEYCHAIN_RANDOM_PWD" build.keychain 
+          security create-keychain -p "$MACOS_CI_KEYCHAIN_RANDOM_PWD" build.keychain
           security default-keychain -s build.keychain
           security unlock-keychain -p "$MACOS_CI_KEYCHAIN_RANDOM_PWD" build.keychain
           security import certificate.p12 -k build.keychain -P "$MACOS_DEVELOPER_ID_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_CI_KEYCHAIN_RANDOM_PWD" build.keychain
+        
+      - name: Set version in Info.plist
+        run: |
+          /usr/libexec/Plistbuddy -c "Set CFBundleShortVersionString ${{ github.event.inputs.version }}" "Info.plist"
+          
+      - name: Set Xcode version
+        run: |
+          # See https://github.com/actions/runner-images/blob/main/images/macos/macos-26-arm64-Readme.md
+          sudo xcode-select -s /Applications/Xcode.app
+
+      - name: Build and export the app
+        run: |
+          echo "Archive app"
+          xcodebuild archive -scheme Clockwise -archivePath ./output/Clockwise.xcarchive
+          
+          echo "Export .app from archive"
+          xcodebuild -archivePath ./output/Clockwise.xcarchive -exportArchive -exportPath ./output/Clockwise -exportOptionsPlist ExportOptions.plist
+      
+      - name: Codesign the app
+        run: |
  
           # We finally codesign our app bundle, specifying the Hardened runtime option
           
