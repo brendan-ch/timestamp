@@ -1,0 +1,112 @@
+name: Release new version
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number (e.g., 1.2.3)'
+        required: true
+        type: string
+  
+jobs:
+  release:
+    name: Build and release new version
+    runs-on: macos-26
+    
+    steps:
+      - name: Checkout current repository
+        uses: actions/checkout@v4
+
+      - name: Build and export the app
+        run: |
+          echo "Archive app"
+          xcodebuild archive -scheme Clockwise -archivePath ./output/Clockwise.xcarchive
+          
+          echo "Export .app from archive"
+          xcodebuild -archivePath ./output/Clockwise.xcarchive -exportArchive -exportPath ./output/Clockwise -exportOptionsPlist ExportOptions.plist
+      
+      - name: Codesign the app
+        env:
+          # The base64-encoded certificate exported from Keychain Access
+          MACOS_DEVELOPER_ID_CERTIFICATE_BASE64: ${{ secrets.PROD_MACOS_DEVELOPER_ID_CERTIFICATE_BASE64 }}
+          
+          # Password used to export the certificate from Keychain Access
+          MACOS_DEVELOPER_ID_CERTIFICATE_PASSWORD: ${{ secrets.PROD_MACOS_DEVELOPER_ID_CERTIFICATE_PASSWORD }}
+          
+          # The full name of the certificate, e.g. "Developer ID Application: Your Name (K1234567)"
+          MACOS_DEVELOPER_ID_CERTIFICATE_NAME: ${{ secrets.PROD_MACOS_DEVELOPER_ID_CERTIFICATE_NAME }}
+          
+          # A random password of choice
+          MACOS_CI_KEYCHAIN_RANDOM_PWD: ${{ secrets.MACOS_CI_KEYCHAIN_RANDOM_PWD }}
+        run: |
+          # Turn our base64-encoded certificate back to a regular .p12 file
+          
+          echo $MACOS_DEVELOPER_ID_CERTIFICATE_BASE64 | base64 --decode > certificate.p12
+ 
+          # We need to create a new keychain, otherwise using the certificate will prompt
+          # with a UI dialog asking for the certificate password, which we can't
+          # use in a headless CI environment
+          
+          security create-keychain -p "$MACOS_CI_KEYCHAIN_RANDOM_PWD" build.keychain 
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$MACOS_CI_KEYCHAIN_RANDOM_PWD" build.keychain
+          security import certificate.p12 -k build.keychain -P "$MACOS_DEVELOPER_ID_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_CI_KEYCHAIN_RANDOM_PWD" build.keychain
+ 
+          # We finally codesign our app bundle, specifying the Hardened runtime option
+          
+          /usr/bin/codesign --force -s "$MACOS_DEVELOPER_ID_CERTIFICATE_NAME" --options runtime target/mac/Espanso.app -v
+ 
+      # From https://federicoterzi.com/blog/automatic-code-signing-and-notarization-for-macos-apps-using-github-actions/
+      - name: Notarize app bundle
+        # Extract the secrets we defined earlier as environment variables
+        env:
+          PROD_MACOS_NOTARIZATION_APPLE_ID_EMAIL: ${{ secrets.PROD_MACOS_NOTARIZATION_APPLE_ID_EMAIL }}
+          PROD_MACOS_NOTARIZATION_TEAM_ID: ${{ secrets.PROD_MACOS_NOTARIZATION_TEAM_ID }}
+          PROD_MACOS_NOTARIZATION_APPLE_ID_APP_PASSWORD: ${{ secrets.PROD_MACOS_NOTARIZATION_APPLE_ID_APP_PASSWORD }}
+        run: |
+          # Store the notarization credentials so that we can prevent a UI password dialog
+          # from blocking the CI
+ 
+          echo "Create keychain profile"
+          xcrun notarytool store-credentials "notarytool-profile" --apple-id "$PROD_MACOS_NOTARIZATION_APPLE_ID_EMAIL" --team-id "$PROD_MACOS_NOTARIZATION_TEAM_ID" --password "$PROD_MACOS_NOTARIZATION_APPLE_ID_APP_PASSWORD"
+ 
+          # We can't notarize an app bundle directly, but we need to compress it as an archive.
+          # Therefore, we create a zip file containing our app bundle, so that we can send it to the
+          # notarization service
+ 
+          echo "Creating temp notarization archive"
+          ditto -c -k --keepParent "output/Clockwise/Clockwise.app" "output/notarization.zip"
+ 
+          # Here we send the notarization request to the Apple's Notarization service, waiting for the result.
+          # This typically takes a few seconds inside a CI environment, but it might take more depending on the App
+          # characteristics. Visit the Notarization docs for more information and strategies on how to optimize it if
+          # you're curious
+ 
+          echo "Notarize app"
+          xcrun notarytool submit "output/notarization.zip" --keychain-profile "notarytool-profile" --wait
+ 
+          # Finally, we need to "attach the staple" to our executable, which will allow our app to be
+          # validated by macOS even when an internet connection is not available.
+          echo "Attach staple"
+          xcrun stapler staple "output/Clockwise/Clockwise.app"
+          
+          echo "Create zip file of app"
+          ditto -c -k --keepParent "output/Clockwise/Clockwise.app" "output/app.zip"
+    
+      - name: Push release tag
+        run: |
+          git tag -a "${{ github.event.inputs.version }}"
+          git push origin ${{ github.event.inputs.version }}
+    
+      - name: Create new release from tag
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          files: |
+            output/app.zip
+          name: "${{ github.event.inputs.version }}"
+          tag_name: "${{ github.event.inputs.version }}"
+        
