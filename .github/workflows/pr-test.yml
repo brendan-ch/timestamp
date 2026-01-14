@@ -40,14 +40,14 @@ jobs:
           security create-keychain -p "$MACOS_CI_KEYCHAIN_RANDOM_PWD" build.keychain
           security default-keychain -s build.keychain
           security unlock-keychain -p "$MACOS_CI_KEYCHAIN_RANDOM_PWD" build.keychain
-          security import certificate.p12 -k build.keychain -P "$MACOS_DEVELOPER_ID_CERTIFICATE_PASSWORD" -T /usr/bin/xcodebuild -T /usr/bin/xcrun
+          security import certificate.p12 -k build.keychain -P "$MACOS_DEVELOPER_ID_CERTIFICATE_PASSWORD" -T /Applications/Xcode_26.2.app
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_CI_KEYCHAIN_RANDOM_PWD" build.keychain
 
 
       - name: Set Xcode version
         run: |
           # See https://github.com/actions/runner-images/blob/main/images/macos/macos-26-arm64-Readme.md
-          sudo xcode-select -s /Applications/Xcode.app
+          sudo xcode-select -s /Applications/Xcode_26.2.app
 
       - name: Build
         env:

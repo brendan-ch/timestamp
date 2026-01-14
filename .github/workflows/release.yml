@@ -55,7 +55,7 @@ jobs:
       - name: Set Xcode version
         run: |
           # See https://github.com/actions/runner-images/blob/main/images/macos/macos-26-arm64-Readme.md
-          sudo xcode-select -s /Applications/Xcode.app
+          sudo xcode-select -s /Applications/Xcode_26.2.app
 
       - name: Build and export the app
         run: |
