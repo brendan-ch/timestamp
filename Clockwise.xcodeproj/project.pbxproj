@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		20D117FD2F18246A0022CBAF /* ExportOptions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 20D117FC2F18246A0022CBAF /* ExportOptions.plist */; };
+		20D118112F1830CA0022CBAF /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 20D118102F1830CA0022CBAF /* Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,6 +33,7 @@
 		20D117B22F1811BF0022CBAF /* ClockwiseTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClockwiseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		20D117BC2F1811C00022CBAF /* ClockwiseUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClockwiseUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		20D117FC2F18246A0022CBAF /* ExportOptions.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = ExportOptions.plist; sourceTree = "<group>"; };
+		20D118102F1830CA0022CBAF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -85,6 +87,7 @@
 		20D1179C2F1811BE0022CBAF = {
 			isa = PBXGroup;
 			children = (
+				20D118102F1830CA0022CBAF /* Info.plist */,
 				20D117FC2F18246A0022CBAF /* ExportOptions.plist */,
 				20D117A72F1811BE0022CBAF /* Clockwise */,
 				20D117B52F1811BF0022CBAF /* ClockwiseTests */,
@@ -225,6 +228,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				20D117FD2F18246A0022CBAF /* ExportOptions.plist in Resources */,
+				20D118112F1830CA0022CBAF /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -417,7 +421,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -453,7 +458,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
