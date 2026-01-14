@@ -1,0 +1,81 @@
+name: Run macOS tests
+
+on:
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+  
+jobs:
+  test:
+    name: Run all tests on macOS
+    runs-on: macos-26
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout current repository
+        uses: actions/checkout@v4
+        
+      - name: Import certificate into keychain
+        env:
+          # The base64-encoded certificate exported from Keychain Access
+          MACOS_DEVELOPER_ID_CERTIFICATE_BASE64: ${{ secrets.MACOS_DEVELOPER_ID_CERTIFICATE_BASE64 }}
+          
+          # Password used to export the certificate from Keychain Access
+          MACOS_DEVELOPER_ID_CERTIFICATE_PASSWORD: ${{ secrets.MACOS_DEVELOPER_ID_CERTIFICATE_PASSWORD }}
+          
+          # The full name of the certificate, e.g. "Developer ID Application: Your Name (K1234567)"
+          MACOS_DEVELOPER_ID_CERTIFICATE_NAME: ${{ secrets.MACOS_DEVELOPER_ID_CERTIFICATE_NAME }}
+          
+          # A random password of choice
+          MACOS_CI_KEYCHAIN_RANDOM_PWD: ${{ secrets.MACOS_CI_KEYCHAIN_RANDOM_PWD }}
+
+        run: |
+          # Turn our base64-encoded certificate back to a regular .p12 file
+          
+          echo $MACOS_DEVELOPER_ID_CERTIFICATE_BASE64 | base64 --decode > certificate.p12
+ 
+          # We need to create a new keychain, otherwise using the certificate will prompt
+          # with a UI dialog asking for the certificate password, which we can't
+          # use in a headless CI environment
+          
+          security create-keychain -p "$MACOS_CI_KEYCHAIN_RANDOM_PWD" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$MACOS_CI_KEYCHAIN_RANDOM_PWD" build.keychain
+          security import certificate.p12 -k build.keychain -P "$MACOS_DEVELOPER_ID_CERTIFICATE_PASSWORD" -T /Applications/Xcode_26.2.app -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_CI_KEYCHAIN_RANDOM_PWD" build.keychain
+
+
+      - name: Set Xcode version
+        run: |
+          # See https://github.com/actions/runner-images/blob/main/images/macos/macos-26-arm64-Readme.md
+          sudo xcode-select -s /Applications/Xcode_26.2.app
+
+      - name: Build
+        env:
+          scheme: 'Clockwise'
+        run: |
+          # xcrun xctrace returns via stderr, not the expected stdout (see https://developer.apple.com/forums/thread/663959)
+          if [ $scheme = default ]; then scheme=$(cat default); fi
+          if [ "`ls -A | grep -i \\.xcworkspace\$`" ]; then filetype_parameter="workspace" && file_to_build="`ls -A | grep -i \\.xcworkspace\$`"; else filetype_parameter="project" && file_to_build="`ls -A | grep -i \\.xcodeproj\$`"; fi
+          file_to_build=`echo $file_to_build | awk '{$1=$1;print}'`
+          xcodebuild build-for-testing -scheme "$scheme"
+
+      - name: Test
+        env:
+          scheme: 'Clockwise'
+        run: |
+          # xcrun xctrace returns via stderr, not the expected stdout (see https://developer.apple.com/forums/thread/663959)
+          if [ $scheme = default ]; then scheme=$(cat default); fi
+          if [ "`ls -A | grep -i \\.xcworkspace\$`" ]; then filetype_parameter="workspace" && file_to_build="`ls -A | grep -i \\.xcworkspace\$`"; else filetype_parameter="project" && file_to_build="`ls -A | grep -i \\.xcodeproj\$`"; fi
+          file_to_build=`echo $file_to_build | awk '{$1=$1;print}'`
+          xcodebuild test-without-building -scheme "$scheme" -resultBundlePath ./output/test-result.xcresult
+          
+      - name: Compress test result
+        run: |
+          ditto -c -k --keepParent "output/test-result.xcresult" "output/test-result.zip"
+    
+      - name: Upload result
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-result
+          path: output/test-result.zip
