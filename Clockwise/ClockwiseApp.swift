@@ -10,8 +10,9 @@ import SwiftUI
 @main
 struct ClockwiseApp: App {
     var body: some Scene {
-        WindowGroup {
+        MenuBarExtra("Clockwise", systemImage: "hourglass") {
             ContentView()
         }
+        .menuBarExtraStyle(.window)
     }
 }
