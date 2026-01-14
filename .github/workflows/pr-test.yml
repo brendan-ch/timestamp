@@ -69,9 +69,13 @@ jobs:
           if [ "`ls -A | grep -i \\.xcworkspace\$`" ]; then filetype_parameter="workspace" && file_to_build="`ls -A | grep -i \\.xcworkspace\$`"; else filetype_parameter="project" && file_to_build="`ls -A | grep -i \\.xcodeproj\$`"; fi
           file_to_build=`echo $file_to_build | awk '{$1=$1;print}'`
           xcodebuild test-without-building -scheme "$scheme" -resultBundlePath ./output/test-result.xcresult
+          
+      - name: Compress test result
+        run: |
+          ditto -c -k --keepParent "output/test-result.xcresult" "output/test-result.zip"
     
       - name: Upload result
         uses: actions/upload-artifact@v4
         with:
           name: test-result
-          path: output/test-result.xcresult
+          path: output/test-result.zip
