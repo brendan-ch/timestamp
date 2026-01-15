@@ -20,24 +20,25 @@ struct TimerContextTests {
         defaults.removePersistentDomain(forName: #file)
         let _ = TimerContext(userDefaults: defaults)
         
-        #expect(defaults.integer(forKey: UserDefaults.focusIntervalMinutes) == 25)
-        #expect(defaults.integer(forKey: UserDefaults.breakIntervalMinutes) == 5)
+        #expect(defaults.integer(forKey: UserDefaults.focusIntervalSeconds) == 25 * 60)
+        #expect(defaults.integer(forKey: UserDefaults.breakIntervalSeconds) == 5 * 60)
     }
     
     @Test("init does not override existing values")
     func initDoesNotOverrideExistingValuesForTimeIntervals() async throws {
         defaults.removePersistentDomain(forName: #file)
-        defaults.set(50, forKey: UserDefaults.focusIntervalMinutes)
-        defaults.set(10, forKey: UserDefaults.breakIntervalMinutes)
+        defaults.set(50 * 60, forKey: UserDefaults.focusIntervalSeconds)
+        defaults.set(10 * 60, forKey: UserDefaults.breakIntervalSeconds)
         
         let _ = TimerContext(userDefaults: defaults)
         
-        #expect(defaults.integer(forKey: UserDefaults.focusIntervalMinutes) == 50)
-        #expect(defaults.integer(forKey: UserDefaults.breakIntervalMinutes) == 10)
+        #expect(defaults.integer(forKey: UserDefaults.focusIntervalSeconds) == 50 * 60)
+        #expect(defaults.integer(forKey: UserDefaults.breakIntervalSeconds) == 10 * 60)
     }
     
     @Test("updatePendingTimerFromProvidedMode updates the pending state if still pending")
     func updatePendingTimerFromProvidedModeUpdatesPendingState() async throws {
+        defaults.removePersistentDomain(forName: #file)
         let context = TimerContext(userDefaults: defaults)
         try context.updatePendingTimerFromProvidedMode(.breakMode)
         #expect(context.state == .pending(mode: .breakMode))
@@ -45,6 +46,7 @@ struct TimerContextTests {
     
     @Test("updatePendingTimerFromProvidedMode throws correct error if already running")
     func updatePendingTimerFromProvidedModeThrowsCorrectError() async throws {
+        defaults.removePersistentDomain(forName: #file)
         let context = TimerContext(userDefaults: defaults)
         try context.start()
         #expect(throws: TimerContext.TimerContextError.timerAlreadyRunning) {
@@ -52,13 +54,28 @@ struct TimerContextTests {
         }
         #expect(context.state == .running(timeRemaining: 1500.0, mode: .focusMode))
     }
+    
+    @Test("start correctly decrements the timer after a few seconds")
+    func startDecrementsTimer() async throws {
+        defaults.removePersistentDomain(forName: #file)
+        let context = TimerContext(userDefaults: defaults)
+        try context.start()
+        try? await Task.sleep(for: .seconds(2.5))
+        #expect(context.state == .running(timeRemaining: 1498.0, mode: .focusMode))
+    }
+    
+    @Test("start starts a timer which automatically stops when done")
+    func startTimerAutomaticallyStops() async throws {
+        defaults.removePersistentDomain(forName: #file)
+        
+    }
 }
 
 @MainActor
 struct TimerContextTimerModeTests {
     @Test("getUserDefaultsKey returns correct keys")
     func getUserDefaultsKeyReturnsCorrectKeys() async throws {
-        #expect(TimerContext.TimerMode.focusMode.getUserDefaultsKey() == UserDefaults.focusIntervalMinutes)
-        #expect(TimerContext.TimerMode.breakMode.getUserDefaultsKey() == UserDefaults.breakIntervalMinutes)
+        #expect(TimerContext.TimerMode.focusMode.getUserDefaultsKey() == UserDefaults.focusIntervalSeconds)
+        #expect(TimerContext.TimerMode.breakMode.getUserDefaultsKey() == UserDefaults.breakIntervalSeconds)
     }
 }

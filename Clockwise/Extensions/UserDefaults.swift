@@ -8,6 +8,6 @@
 import Foundation
 
 extension UserDefaults {
-    static var focusIntervalMinutes: String { "focusIntervalMinutes" }
-    static var breakIntervalMinutes: String { "breakIntervalMinutes" }
+    static var focusIntervalSeconds: String { "focusIntervalMinutes" }
+    static var breakIntervalSeconds: String { "breakIntervalMinutes" }
 }

@@ -11,8 +11,8 @@ import AsyncAlgorithms
 @Observable
 internal class TimerContext {
     private let defaultIntervals = [
-        UserDefaults.focusIntervalMinutes: 25,
-        UserDefaults.breakIntervalMinutes: 5,
+        UserDefaults.focusIntervalSeconds: 25 * 60,
+        UserDefaults.breakIntervalSeconds: 5 * 60,
     ]
     
     private(set) var state: State = .pending(mode: .focusMode)
@@ -33,8 +33,8 @@ internal class TimerContext {
     
     private func setupUserDefaults() {
         for (key, value) in defaultIntervals {
-            let minutes = userDefaults.integer(forKey: key)
-            if minutes == 0 {
+            let defaultsValue = userDefaults.integer(forKey: key)
+            if defaultsValue == 0 {
                 userDefaults.set(value, forKey: key)
             }
         }
@@ -51,8 +51,8 @@ internal class TimerContext {
     func start() throws {
         if case .pending(let mode) = state {
             do {
-                let minutes = userDefaults.integer(forKey: mode.getUserDefaultsKey())
-                state = .running(timeRemaining: TimeInterval(minutes * 60), mode: mode)
+                let seconds = userDefaults.integer(forKey: mode.getUserDefaultsKey())
+                state = .running(timeRemaining: TimeInterval(seconds), mode: mode)
                 try setTimerUpdateTask()
             } catch {
                 state = .pending(mode: mode)
@@ -67,9 +67,10 @@ internal class TimerContext {
         let timerSequence = try getTimerSequence()
         
         timerUpdateTask = Task {
-            for await instant in timerSequence {
+            for await _ in timerSequence {
                 if !Task.isCancelled, case .running(let timeRemaining, let mode) = state {
-                    state = .running(timeRemaining: timeRemaining - 1, mode: mode)
+                    state = .running(timeRemaining: timeRemaining - Double(updateInterval.components.seconds), mode: mode)
+                    print(state)
                 } else {
                     break
                 }
@@ -113,9 +114,9 @@ internal class TimerContext {
         
         func getUserDefaultsKey() -> String {
             if self == .focusMode {
-                return UserDefaults.focusIntervalMinutes
+                return UserDefaults.focusIntervalSeconds
             } else {
-                return UserDefaults.breakIntervalMinutes
+                return UserDefaults.breakIntervalSeconds
             }
         }
     }
