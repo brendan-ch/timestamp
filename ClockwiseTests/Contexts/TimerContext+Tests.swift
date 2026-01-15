@@ -82,7 +82,7 @@ struct TimerContextTests {
         
         let context = TimerContext(userDefaults: defaults)
         try context.start()
-        try? await Task.sleep(for: .seconds(2))
+        try? await Task.sleep(for: .seconds(3))
         #expect(context.state == .pending(mode: .focusMode))
     }
 }

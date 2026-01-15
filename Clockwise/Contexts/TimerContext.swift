@@ -69,6 +69,10 @@ internal class TimerContext {
         timerUpdateTask = Task {
             for await _ in timerSequence {
                 if !Task.isCancelled, case .running(_, let starter) = state {
+                    if starter.derivedTimeRemaining < 0 {
+                        try stop()
+                    }
+                    
                     state = .running(
                         timeRemaining: starter.derivedTimeRemaining,
                         starter: starter
