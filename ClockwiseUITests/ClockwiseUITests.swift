@@ -38,12 +38,13 @@ final class ClockwiseUITests: XCTestCase {
     @MainActor
     func testTimerAutomaticallyStops() throws {
         let app = XCUIApplication()
-        app.launchArguments += ["-focusIntervalMinutes", "1"]
+        app.launchArguments += ["-focusIntervalMinutes", "2"]
         app.activate()
         
         app/*@START_MENU_TOKEN@*/.statusItems/*[[".menuBars.statusItems[\"Duration\"]",".statusItems",".statusItems[\"Duration\"]"],[[[-1,2],[-1,1],[-1,0]]],[1]]@END_MENU_TOKEN@*/.firstMatch.click()
         app.buttons["Start"].firstMatch.click()
-        XCTAssert(app.staticTexts["00:01"].waitForExistence(timeout: 5))
+        XCTAssert(app.staticTexts["00:02"].waitForExistence(timeout: 5))
+        XCTAssert(app.buttons["Start"].exists)
     }
 
     @MainActor
