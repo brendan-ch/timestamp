@@ -8,15 +8,16 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var buttonClicked = false
+    @State private var timerContext = TimerContext()
     
     var body: some View {
         VStack {
             ClockView()
+                .environment(timerContext)
             
             HStack {
                 Button {
-                    buttonClicked = true
+                    try? timerContext.start()
                 } label: {
                     HStack {
                         Text("Start")
@@ -24,10 +25,6 @@ struct ContentView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
-            }
-            
-            if buttonClicked {
-                Text("Button clicked")
             }
         }
         .padding()
