@@ -38,7 +38,7 @@ final class ClockwiseUITests: XCTestCase {
     @MainActor
     func testTimerAutomaticallyStops() throws {
         let app = XCUIApplication()
-        app.launchArguments += ["-focusIntervalMinutes", "2"]
+        app.launchArguments += ["-focusIntervalSeconds", "2"]
         app.launch()
 
         app/*@START_MENU_TOKEN@*/.statusItems/*[[".menuBars.statusItems[\"Duration\"]",".statusItems",".statusItems[\"Duration\"]"],[[[-1,2],[-1,1],[-1,0]]],[1]]@END_MENU_TOKEN@*/.firstMatch.click()
