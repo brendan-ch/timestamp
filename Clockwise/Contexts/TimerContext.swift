@@ -48,36 +48,63 @@ internal class TimerContext {
         }
     }
     
-    func start() {
-        
-        
-//        state = .running(timeRemaining: )
+    func start() throws {
+        if case .pending(let mode) = state {
+            do {
+                let minutes = userDefaults.integer(forKey: mode.getUserDefaultsKey())
+                state = .running(timeRemaining: TimeInterval(minutes * 60), mode: mode)
+                try setTimerUpdateTask()
+            } catch {
+                state = .pending(mode: mode)
+                throw error
+            }
+        } else {
+            throw TimerContextError.timerAlreadyRunning
+        }
     }
     
-    private func getTimerSequence() -> AsyncTimerSequence<ContinuousClock>? {
-        if case .running(_) = state {
+    private func setTimerUpdateTask() throws {
+        let timerSequence = try getTimerSequence()
+        
+        timerUpdateTask = Task {
+            for await instant in timerSequence {
+                if !Task.isCancelled, case .running(let timeRemaining, let mode) = state {
+                    state = .running(timeRemaining: timeRemaining - 1, mode: mode)
+                } else {
+                    break
+                }
+            }
+        }
+    }
+    
+    private func getTimerSequence() throws -> AsyncTimerSequence<ContinuousClock> {
+        if case .running(_, _) = state {
             let clock = ContinuousClock()
             let timerSequence = AsyncTimerSequence(interval: updateInterval, tolerance: .nanoseconds(1), clock: clock)
             
             return timerSequence
         }
         
-        return nil
+        throw TimerContextError.timerNotRunning
     }
 
-    func stop() {
-        
+    func stop() throws {
+        if case .running(_, let mode) = state {
+            state = .pending(mode: mode)
+        }
+        throw TimerContextError.timerNotRunning
     }
     
     // MARK: Custom data structures
     
     enum State: Equatable {
         case pending(mode: TimerMode)
-        case running(timeRemaining: TimeInterval)
+        case running(timeRemaining: TimeInterval, mode: TimerMode)
     }
     
     enum TimerContextError: Error {
         case timerAlreadyRunning
+        case timerNotRunning
     }
     
     enum TimerMode {

@@ -46,11 +46,11 @@ struct TimerContextTests {
     @Test("updatePendingTimerFromProvidedMode throws correct error if already running")
     func updatePendingTimerFromProvidedModeThrowsCorrectError() async throws {
         let context = TimerContext(userDefaults: defaults)
-        context.start()
+        try context.start()
         #expect(throws: TimerContext.TimerContextError.timerAlreadyRunning) {
             try context.updatePendingTimerFromProvidedMode(.breakMode)
         }
-        #expect(context.state == .pending(mode: .focusMode))
+        #expect(context.state == .running(timeRemaining: 1500.0, mode: .focusMode))
     }
 }
 
