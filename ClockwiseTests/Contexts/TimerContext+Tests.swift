@@ -75,6 +75,16 @@ struct TimerContextTests {
         }
     }
     
+    @Test("start throws if timer is already running")
+    func startThrowsIfTimerRunning() async throws {
+        defaults.removePersistentDomain(forName: #file)
+        let context = TimerContext(userDefaults: defaults)
+        try context.start()
+        #expect(throws: TimerContext.TimerContextError.timerAlreadyRunning) {
+            try context.start()
+        }
+    }
+    
     @Test("start starts a timer which automatically stops when done")
     func startTimerAutomaticallyStops() async throws {
         defaults.removePersistentDomain(forName: #file)
@@ -84,6 +94,29 @@ struct TimerContextTests {
         try context.start()
         try? await Task.sleep(for: .seconds(3))
         #expect(context.state == .pending(mode: .focusMode))
+    }
+    
+    static let sleepTimes = [0, 2]
+    @Test("stop stops a running timer", arguments: sleepTimes)
+    func stopStopsRunningTimer(sleepTime: Int) async throws {
+        defaults.removePersistentDomain(forName: #file)
+        
+        let context = TimerContext(userDefaults: defaults)
+        try context.start()
+        try? await Task.sleep(for: .seconds(sleepTime))
+        try context.stop()
+        try? await Task.sleep(for: .seconds(sleepTime))
+        #expect(context.state == .pending(mode: .focusMode))
+    }
+    
+    @Test("stop throws if timer is not running")
+    func stopThrowsIfNotRunning() async throws {
+        defaults.removePersistentDomain(forName: #file)
+        
+        let context = TimerContext(userDefaults: defaults)
+        #expect(throws: TimerContext.TimerContextError.timerNotRunning) {
+            try context.stop()
+        }
     }
 }
 
