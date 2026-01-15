@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		20A61BD92F18778900C6866A /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 20A61BD82F18778900C6866A /* AsyncAlgorithms */; };
 		20D117FD2F18246A0022CBAF /* ExportOptions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 20D117FC2F18246A0022CBAF /* ExportOptions.plist */; };
-		20D118112F1830CA0022CBAF /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 20D118102F1830CA0022CBAF /* Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -234,7 +233,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				20D117FD2F18246A0022CBAF /* ExportOptions.plist in Resources */,
-				20D118112F1830CA0022CBAF /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
