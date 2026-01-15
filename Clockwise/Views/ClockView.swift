@@ -10,7 +10,9 @@ import SwiftUI
 struct ClockView: View {
     var body: some View {
         VStack {
-            Text("Clock view")
+            Text("25:00")
+                .font(.system(size: 64))
+                .bold()
         }
         .frame(width: 256, height: 256)
     }
