@@ -15,22 +15,11 @@ class TimerContext {
         UserDefaults.breakIntervalMinutes: 5,
     ]
     
-    private(set) var state: State = .pending
+    private(set) var state: State = .pending(mode: .focusMode)
     
     private let updateInterval: Duration
     private let userDefaults: UserDefaults
-    
-    /// Sequence that UI listeners can subscribe to to know when exactly to update the UI.
-    var timerUpdateSequence: (any AsyncSequence)? {
-        if state == .pending {
-            return nil
-        }
-        
-        let clock = ContinuousClock()
-        let timerSequence = AsyncTimerSequence(interval: updateInterval, clock: clock)
-        let sequence = chain([clock.now].async, timerSequence)
-        return sequence
-    }
+    private var timerUpdateTask: Task<Void, Error>? = nil
     
     init(
         updateInterval: Duration = .seconds(1),
@@ -51,16 +40,46 @@ class TimerContext {
         }
     }
     
-    func start() {
+    func updatePendingTimerFromProvidedMode(_ mode: TimerMode) throws {
+        if case .pending(_) = state {
+            state = .pending(mode: mode)
+        } else {
+            throw TimerContextError.timerAlreadyRunning
+        }
     }
     
+    func start() {
+        
+    }
+    
+    private func getTimerSequence() -> AsyncTimerSequence<ContinuousClock>? {
+        if case .running(_) = state {
+            let clock = ContinuousClock()
+            let timerSequence = AsyncTimerSequence(interval: updateInterval, tolerance: .nanoseconds(1), clock: clock)
+            
+            return timerSequence
+        }
+        
+        return nil
+    }
+
     func stop() {
+        
     }
     
     // MARK: Custom data structures
     
     enum State: Equatable {
-        case pending
-        case running(duration: Duration, start: Date)
+        case pending(mode: TimerMode)
+        case running(timeRemaining: TimeInterval)
+    }
+    
+    enum TimerContextError: Error {
+        case timerAlreadyRunning
+    }
+    
+    enum TimerMode {
+        case focusMode
+        case breakMode
     }
 }
