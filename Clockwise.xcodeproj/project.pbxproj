@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		20A61BD92F18778900C6866A /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 20A61BD82F18778900C6866A /* AsyncAlgorithms */; };
 		20D117FD2F18246A0022CBAF /* ExportOptions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 20D117FC2F18246A0022CBAF /* ExportOptions.plist */; };
-		20D118112F1830CA0022CBAF /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 20D118102F1830CA0022CBAF /* Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +64,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				20A61BD92F18778900C6866A /* AsyncAlgorithms in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -127,6 +128,7 @@
 			);
 			name = Clockwise;
 			packageProductDependencies = (
+				20A61BD82F18778900C6866A /* AsyncAlgorithms */,
 			);
 			productName = Clockwise;
 			productReference = 20D117A52F1811BE0022CBAF /* Clockwise.app */;
@@ -210,6 +212,9 @@
 			);
 			mainGroup = 20D1179C2F1811BE0022CBAF;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				20A61BD72F18778900C6866A /* XCRemoteSwiftPackageReference "swift-async-algorithms" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 20D117A62F1811BE0022CBAF /* Products */;
 			projectDirPath = "";
@@ -228,7 +233,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				20D117FD2F18246A0022CBAF /* ExportOptions.plist in Resources */,
-				20D118112F1830CA0022CBAF /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -616,6 +620,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		20A61BD72F18778900C6866A /* XCRemoteSwiftPackageReference "swift-async-algorithms" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-async-algorithms.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		20A61BD82F18778900C6866A /* AsyncAlgorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 20A61BD72F18778900C6866A /* XCRemoteSwiftPackageReference "swift-async-algorithms" */;
+			productName = AsyncAlgorithms;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 20D1179D2F1811BE0022CBAF /* Project object */;
 }
