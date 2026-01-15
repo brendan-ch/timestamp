@@ -35,4 +35,21 @@ struct TimerContextTests {
         #expect(defaults.integer(forKey: UserDefaults.focusIntervalMinutes) == 50)
         #expect(defaults.integer(forKey: UserDefaults.breakIntervalMinutes) == 10)
     }
+    
+    @Test("updatePendingTimerFromProvidedMode updates the pending state if still pending")
+    func updatePendingTimerFromProvidedModeUpdatesPendingState() async throws {
+        let context = TimerContext(userDefaults: defaults)
+        try context.updatePendingTimerFromProvidedMode(.breakMode)
+        #expect(context.state == .pending(mode: .breakMode))
+    }
+    
+    @Test("updatePendingTimerFromProvidedMode throws correct error if already running")
+    func updatePendingTimerFromProvidedModeThrowsCorrectError() async throws {
+        let context = TimerContext(userDefaults: defaults)
+        context.start()
+        #expect(throws: TimerContext.TimerContextError.timerAlreadyRunning) {
+            try context.updatePendingTimerFromProvidedMode(.breakMode)
+        }
+        #expect(context.state == .pending(mode: .focusMode))
+    }
 }
