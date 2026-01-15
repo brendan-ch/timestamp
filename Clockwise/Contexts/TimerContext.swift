@@ -71,6 +71,7 @@ internal class TimerContext {
                 if !Task.isCancelled, case .running(_, let starter) = state {
                     if starter.derivedTimeRemaining < 0 {
                         try stop()
+                        break
                     }
                     
                     state = .running(
