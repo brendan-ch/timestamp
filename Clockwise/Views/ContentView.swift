@@ -10,6 +10,19 @@ import SwiftUI
 struct ContentView: View {
     @State private var timerContext = TimerContext()
     
+    private var isRunning: Bool {
+        switch timerContext.state {
+        case .pending(_):
+            return false
+        case .running(_, _):
+            return true
+        }
+
+    }
+    private var buttonText: String {
+        isRunning ? "Stop" : "Start"
+    }
+    
     var body: some View {
         VStack {
             ClockView()
@@ -17,10 +30,14 @@ struct ContentView: View {
             
             HStack {
                 Button {
-                    try? timerContext.start()
+                    if isRunning {
+                        try? timerContext.stop()
+                    } else {
+                        try? timerContext.start()
+                    }
                 } label: {
                     HStack {
-                        Text("Start")
+                        Text(buttonText)
                     }
                 }
                 .buttonStyle(.borderedProminent)
