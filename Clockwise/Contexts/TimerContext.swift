@@ -9,7 +9,7 @@ import Foundation
 import AsyncAlgorithms
 
 @Observable
-class TimerContext {
+internal class TimerContext {
     private let defaultIntervals = [
         UserDefaults.focusIntervalMinutes: 25,
         UserDefaults.breakIntervalMinutes: 5,
@@ -50,6 +50,8 @@ class TimerContext {
     
     func start() {
         
+        
+//        state = .running(timeRemaining: )
     }
     
     private func getTimerSequence() -> AsyncTimerSequence<ContinuousClock>? {
@@ -81,5 +83,13 @@ class TimerContext {
     enum TimerMode {
         case focusMode
         case breakMode
+        
+        func getUserDefaultsKey() -> String {
+            if self == .focusMode {
+                return UserDefaults.focusIntervalMinutes
+            } else {
+                return UserDefaults.breakIntervalMinutes
+            }
+        }
     }
 }

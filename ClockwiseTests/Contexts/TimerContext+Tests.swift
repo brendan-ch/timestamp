@@ -1,5 +1,5 @@
 //
-//  TimerContext.swift
+//  TimerContext+Tests.swift
 //  Clockwise
 //
 //  Created by Brendan Chen on 2026.01.14.
@@ -51,5 +51,14 @@ struct TimerContextTests {
             try context.updatePendingTimerFromProvidedMode(.breakMode)
         }
         #expect(context.state == .pending(mode: .focusMode))
+    }
+}
+
+@MainActor
+struct TimerContextTimerModeTests {
+    @Test("getUserDefaultsKey returns correct keys")
+    func getUserDefaultsKeyReturnsCorrectKeys() async throws {
+        #expect(TimerContext.TimerMode.focusMode.getUserDefaultsKey() == UserDefaults.focusIntervalMinutes)
+        #expect(TimerContext.TimerMode.breakMode.getUserDefaultsKey() == UserDefaults.breakIntervalMinutes)
     }
 }
