@@ -14,9 +14,9 @@ struct ClockView: View {
     // From https://stackoverflow.com/questions/77237979/how-to-display-countdown-timer
     var timeRemainingFormatter: DateComponentsFormatter = {
         let formatter = DateComponentsFormatter()
-        formatter.allowedUnits = [.hour, .minute, .second]
+        formatter.allowedUnits = [.minute, .second]
         formatter.unitsStyle = .positional
-        formatter.zeroFormattingBehavior = .dropLeading
+        formatter.zeroFormattingBehavior = .pad
         return formatter
     }()
     
