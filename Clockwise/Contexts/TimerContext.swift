@@ -52,7 +52,7 @@ internal class TimerContext {
         if case .pending(let mode) = state {
             do {
                 let seconds = userDefaults.integer(forKey: mode.getUserDefaultsKey())
-                state = .running(timeRemaining: TimeInterval(seconds), mode: mode)
+                state = .running(timeRemaining: TimeInterval(seconds), starter: .init(mode: .focusMode, start: .now, startingInterval: TimeInterval(seconds)))
                 try setTimerUpdateTask()
             } catch {
                 state = .pending(mode: mode)
@@ -68,9 +68,11 @@ internal class TimerContext {
         
         timerUpdateTask = Task {
             for await _ in timerSequence {
-                if !Task.isCancelled, case .running(let timeRemaining, let mode) = state {
-                    state = .running(timeRemaining: timeRemaining - Double(updateInterval.components.seconds), mode: mode)
-                    print(state)
+                if !Task.isCancelled, case .running(_, let starter) = state {
+                    state = .running(
+                        timeRemaining: starter.derivedTimeRemaining,
+                        starter: starter
+                    )
                 } else {
                     break
                 }
@@ -90,8 +92,8 @@ internal class TimerContext {
     }
 
     func stop() throws {
-        if case .running(_, let mode) = state {
-            state = .pending(mode: mode)
+        if case .running(_, let starter) = state {
+            state = .pending(mode: starter.mode)
         }
         throw TimerContextError.timerNotRunning
     }
@@ -100,7 +102,17 @@ internal class TimerContext {
     
     enum State: Equatable {
         case pending(mode: TimerMode)
-        case running(timeRemaining: TimeInterval, mode: TimerMode)
+        case running(timeRemaining: TimeInterval, starter: StarterInfo)
+        
+        struct StarterInfo: Equatable {
+            let mode: TimerMode
+            let start: Date
+            let startingInterval: TimeInterval
+            
+            var derivedTimeRemaining: TimeInterval {
+                startingInterval - (Date.now.timeIntervalSince(start))
+            }
+        }
     }
     
     enum TimerContextError: Error {

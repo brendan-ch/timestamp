@@ -52,7 +52,12 @@ struct TimerContextTests {
         #expect(throws: TimerContext.TimerContextError.timerAlreadyRunning) {
             try context.updatePendingTimerFromProvidedMode(.breakMode)
         }
-        #expect(context.state == .running(timeRemaining: 1500.0, mode: .focusMode))
+        
+        if case .running(let timeRemaining, _) = context.state {
+            #expect(timeRemaining == 1500.0)
+        } else {
+            Issue.record("State is not .running")
+        }
     }
     
     @Test("start correctly decrements the timer after a few seconds")
@@ -61,13 +66,24 @@ struct TimerContextTests {
         let context = TimerContext(userDefaults: defaults)
         try context.start()
         try? await Task.sleep(for: .seconds(2.5))
-        #expect(context.state == .running(timeRemaining: 1498.0, mode: .focusMode))
+        
+        if case .running(let timeRemaining, let starter) = context.state {
+            #expect(timeRemaining > 1497.0 && timeRemaining < 1499.0)
+            #expect(starter.mode == .focusMode)
+        } else {
+            Issue.record("State is not .running")
+        }
     }
     
     @Test("start starts a timer which automatically stops when done")
     func startTimerAutomaticallyStops() async throws {
         defaults.removePersistentDomain(forName: #file)
+        defaults.set(1, forKey: UserDefaults.focusIntervalSeconds)
         
+        let context = TimerContext(userDefaults: defaults)
+        try context.start()
+        try? await Task.sleep(for: .seconds(2))
+        #expect(context.state == .pending(mode: .focusMode))
     }
 }
 
