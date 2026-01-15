@@ -98,8 +98,9 @@ internal class TimerContext {
     func stop() throws {
         if case .running(_, let starter) = state {
             state = .pending(mode: starter.mode)
+        } else {
+            throw TimerContextError.timerNotRunning
         }
-        throw TimerContextError.timerNotRunning
     }
     
     // MARK: Custom data structures
