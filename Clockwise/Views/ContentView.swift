@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var timerContext = TimerContext()
+    @Environment(TimerContext.self) private var timerContext
     
     private var isRunning: Bool {
         switch timerContext.state {
@@ -50,4 +50,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .environment(TimerContext())
 }
