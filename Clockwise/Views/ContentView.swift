@@ -8,7 +8,11 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var timerContext = TimerContext()
+    @Environment(TimerContext.self) private var timerContext
+    
+    /// The timer mode selection to show in the UI.
+    /// Must be kept in sync manually with the timer context.
+    @State private var timerModeSelection: TimerContext.TimerMode = .focusMode
     
     private var isRunning: Bool {
         switch timerContext.state {
@@ -25,6 +29,18 @@ struct ContentView: View {
     
     var body: some View {
         VStack {
+            VStack {
+                if !isRunning {
+                    Picker("Timer mode", selection: $timerModeSelection) {
+                        Text("Focus").tag(TimerContext.TimerMode.focusMode)
+                        Text("Break").tag(TimerContext.TimerMode.breakMode)
+                    }
+                    .labelsHidden()
+                    .pickerStyle(.segmented)
+                }
+            }
+            .frame(minHeight: 32)
+            
             ClockView()
                 .environment(timerContext)
             
@@ -44,10 +60,19 @@ struct ContentView: View {
                 .controlSize(.large)
             }
         }
+        .onChange(of: timerModeSelection) {
+            try? timerContext.updatePendingTimerFromProvidedMode(timerModeSelection)
+        }
+        .onChange(of: timerContext.state) {
+            if case .pending(let mode) = timerContext.state {
+                timerModeSelection = mode
+            }
+        }
         .padding()
     }
 }
 
 #Preview {
     ContentView()
+        .environment(TimerContext())
 }
