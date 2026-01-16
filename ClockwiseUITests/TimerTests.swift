@@ -1,27 +1,13 @@
 //
-//  ClockwiseUITests.swift
-//  ClockwiseUITests
+//  TimerTests.swift
+//  Clockwise
 //
-//  Created by Brendan Chen on 2026.01.14.
+//  Created by Brendan Chen on 2026.01.16.
 //
 
 import XCTest
 
-final class ClockwiseUITests: XCTestCase {
-
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-
-        // In UI tests it is usually best to stop immediately when a failure occurs.
-        continueAfterFailure = false
-
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-    
+final class TimerTests: ClockwiseBaseUITests {
     @MainActor
     func testStartStopTimer() throws {
         let app = XCUIApplication()
@@ -40,18 +26,10 @@ final class ClockwiseUITests: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments += ["-focusIntervalSeconds", "2"]
         app.launch()
-
+        
         app/*@START_MENU_TOKEN@*/.statusItems/*[[".menuBars.statusItems[\"Duration\"]",".statusItems",".statusItems[\"Duration\"]"],[[[-1,2],[-1,1],[-1,0]]],[1]]@END_MENU_TOKEN@*/.firstMatch.click()
         app.buttons["Start"].firstMatch.click()
         XCTAssert(app.staticTexts["00:02"].waitForExistence(timeout: 5))
         XCTAssert(app.buttons["Start"].exists)
-    }
-
-    @MainActor
-    func testLaunchPerformance() throws {
-        // This measures how long it takes to launch your application.
-        measure(metrics: [XCTApplicationLaunchMetric()]) {
-            XCUIApplication().launch()
-        }
     }
 }
