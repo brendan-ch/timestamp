@@ -10,7 +10,6 @@ import XCTest
 final class TimerTests: ClockwiseBaseUITests {
     @MainActor
     func testStartStopTimer() throws {
-        let app = XCUIApplication()
         app.launch()
         app/*@START_MENU_TOKEN@*/.statusItems/*[[".menuBars.statusItems[\"Duration\"]",".statusItems",".statusItems[\"Duration\"]"],[[[-1,2],[-1,1],[-1,0]]],[1]]@END_MENU_TOKEN@*/.firstMatch.click()
         app/*@START_MENU_TOKEN@*/.buttons["Start"]/*[[".groups.buttons[\"Start\"]",".buttons",".buttons[\"Start\"]"],[[[-1,2],[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.firstMatch.click()
@@ -23,7 +22,6 @@ final class TimerTests: ClockwiseBaseUITests {
     
     @MainActor
     func testTimerAutomaticallyStops() throws {
-        let app = XCUIApplication()
         app.launchArguments += ["-focusIntervalSeconds", "2"]
         app.launch()
         
