@@ -47,6 +47,8 @@ final class SettingsTests: ClockwiseBaseUITests {
         systempreferencesApp.activate()
         let element = systempreferencesApp.staticTexts.matching(identifier: "Notifications").element(boundBy: 0)
         XCTAssert(element.waitForExistence(timeout: 5))
+        
+        systempreferencesApp.terminate()
     }
     
     func testGrantNotificationPermissionAsksForPermission() throws {
@@ -80,5 +82,7 @@ final class SettingsTests: ClockwiseBaseUITests {
         let notificationcenteruiApp = XCUIApplication(bundleIdentifier: "com.apple.notificationcenterui")
         notificationcenteruiApp.activate()
         XCTAssert(notificationcenteruiApp.staticTexts["“Clockwise” Notifications"].firstMatch.waitForExistence(timeout: 5))
+        
+        systempreferencesApp.terminate()
     }
 }
