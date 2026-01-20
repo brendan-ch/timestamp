@@ -12,23 +12,29 @@ import ServiceManagement
 struct SettingsView: View {
     @State private var launchAtLogin = false
     let appService = SMAppService()
+    
+    @State private var errorLocalizedDescription: String? = nil
 
     var body: some View {
         Form {
             Toggle("Open on login", isOn: $launchAtLogin)
+            
+            if let errorLocalizedDescription = errorLocalizedDescription {
+                Text(errorLocalizedDescription)
+                    .foregroundStyle(.red)
+            }
         }
         .padding()
         .frame(width: 400)
         .onChange(of: launchAtLogin) {
             do {
-                
                 if launchAtLogin {
                     try appService.register()
                 } else {
                     try appService.unregister()
                 }
             } catch {
-                print(error)
+                errorLocalizedDescription = error.localizedDescription
             }
         }
         .onAppear {
