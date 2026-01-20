@@ -47,6 +47,7 @@ struct ContentView: View {
                     Button("Quit", action: quit)
                 } label: {
                     Image(systemName: "ellipsis")
+                        .accessibilityLabel("Options")
                 }
             }
             .frame(minHeight: 32)
