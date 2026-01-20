@@ -11,7 +11,7 @@ import ServiceManagement
 @MainActor  // for some reason the provided Settings struct throws a warning if this isn't here
 struct SettingsView: View {
     @State private var launchAtLogin = false
-    let appService = SMAppService()
+    private let appService = SMAppService()
     
     @State private var errorLocalizedDescription: String? = nil
 
@@ -27,20 +27,28 @@ struct SettingsView: View {
         .padding()
         .frame(width: 400)
         .onChange(of: launchAtLogin) {
-            do {
-                if launchAtLogin {
-                    try appService.register()
-                } else {
-                    try appService.unregister()
-                }
-            } catch {
-                errorLocalizedDescription = error.localizedDescription
-            }
+            updateAppServiceRegistration()
         }
         .onAppear {
-            if appService.status == .enabled {
-                launchAtLogin = true
+            initializeOpenOnLoginState()
+        }
+    }
+    
+    private func updateAppServiceRegistration() {
+        do {
+            if launchAtLogin {
+                try appService.register()
+            } else {
+                try appService.unregister()
             }
+        } catch {
+            errorLocalizedDescription = error.localizedDescription
+        }
+    }
+    
+    private func initializeOpenOnLoginState() {
+        if appService.status == .enabled {
+            launchAtLogin = true
         }
     }
 }
