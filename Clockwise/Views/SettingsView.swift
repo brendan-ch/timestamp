@@ -16,8 +16,7 @@ struct SettingsView: View {
     
     @State private var errorLocalizedDescription: String? = nil
     
-    @Environment(\.requestNotificationPermission) private var requestNotificationPermission
-    @Environment(\.getNotificationPermissionStatus) private var getNotificationPermissionStatus
+    @Environment(NotificationsContext.self) private var notificationsContext
     @State private var renderedNotificationPermissionStatus: UNAuthorizationStatus = .notDetermined
 
     var body: some View {
@@ -84,14 +83,14 @@ struct SettingsView: View {
     
     private func initializeNotificationPermissionState() {
         Task {
-            renderedNotificationPermissionStatus = await getNotificationPermissionStatus()
+            renderedNotificationPermissionStatus = await notificationsContext.getNotificationPermissionStatus()
         }
     }
 
     private func grantNotificationPermission() {
         Task {
             do {
-                try await requestNotificationPermission()
+                try await notificationsContext.requestNotificationPermission()
             } catch {
                 errorLocalizedDescription = error.localizedDescription
             }
@@ -107,7 +106,5 @@ struct SettingsView: View {
 
 #Preview {
     SettingsView()
-        .environment(\.requestNotificationPermission) {
-            print("Requesting notification permission")
-        }
+        .environment(NotificationsContext())
 }

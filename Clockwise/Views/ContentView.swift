@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UserNotifications
 
 struct ContentView: View {
     @Environment(TimerContext.self) private var timerContext
@@ -13,6 +14,8 @@ struct ContentView: View {
     /// The timer mode selection to show in the UI.
     /// Must be kept in sync manually with the timer context.
     @State private var timerModeSelection: TimerContext.TimerMode = .focusMode
+    
+    @State private var renderedNotificationPermissionStatus: UNAuthorizationStatus = .notDetermined
     
     private var isRunning: Bool {
         switch timerContext.state {

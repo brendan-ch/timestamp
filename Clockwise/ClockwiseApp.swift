@@ -11,16 +11,14 @@ import UserNotifications
 @main
 struct ClockwiseApp: App {
     @State private var timerContext = TimerContext()
+    @State private var notificationsContext = NotificationsContext()
     @State private var menuBarText: String? = nil
-    
-    private var notificationCenter = UNUserNotificationCenter.current()
     
     var body: some Scene {
         MenuBarExtra {
             ContentView()
                 .environment(timerContext)
-                .environment(\.requestNotificationPermission, requestNotificationPermission)
-                .environment(\.getNotificationPermissionStatus, getNotificationPermissionStatus)
+                .environment(notificationsContext)
         } label: {
             HStack {
                 Image(systemName: "hourglass")
@@ -35,8 +33,7 @@ struct ClockwiseApp: App {
         }
         
         Settings(content: SettingsView.init)
-            .environment(\.requestNotificationPermission, requestNotificationPermission)
-            .environment(\.getNotificationPermissionStatus, getNotificationPermissionStatus)
+            .environment(notificationsContext)
     }
     
     private func updateMenuBarText() {
@@ -50,15 +47,5 @@ struct ClockwiseApp: App {
         } else {
             menuBarText = nil
         }
-    }
-    
-    private func requestNotificationPermission() async throws {
-        try await notificationCenter.requestAuthorization(
-            options: [.alert, .sound]
-        )
-    }
-    
-    private func getNotificationPermissionStatus() async -> UNAuthorizationStatus {
-        await notificationCenter.notificationSettings().authorizationStatus
     }
 }
