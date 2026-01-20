@@ -29,7 +29,7 @@ struct ContentView: View {
     
     var body: some View {
         VStack {
-            VStack {
+            HStack {
                 if !isRunning {
                     Picker("Timer mode", selection: $timerModeSelection) {
                         Text("Focus").tag(TimerContext.TimerMode.focusMode)
@@ -37,6 +37,16 @@ struct ContentView: View {
                     }
                     .labelsHidden()
                     .pickerStyle(.segmented)
+                }
+                Spacer()
+                
+                Menu {
+                    SettingsLink {
+                        Text("Settings")
+                    }
+                    Button("Quit", action: quit)
+                } label: {
+                    Image(systemName: "ellipsis")
                 }
             }
             .frame(minHeight: 32)
@@ -69,6 +79,11 @@ struct ContentView: View {
             }
         }
         .padding()
+        .frame(width: 320)
+    }
+    
+    func quit() {
+        NSApp.terminate(nil)
     }
 }
 
