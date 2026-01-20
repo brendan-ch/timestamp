@@ -27,17 +27,16 @@ struct SettingsView: View {
                 Toggle("Open on login", isOn: $launchAtLogin)
                 
                 VStack(alignment: .leading) {
-                    Text("Notification permission: not granted")
+                    Text("Notification permission: \(renderedNotificationPermissionStatus.asString())")
                     
                     if renderedNotificationPermissionStatus == .notDetermined {
                         Button("Grant notification permission", action: grantNotificationPermission)
                             .buttonStyle(.borderedProminent)
                     }
                     Button("Open system notification settings", action: openNotificationSystemSettingsPane)
+                    
                     Text(
-                    """
-                    Grant permission to send timer notifications.
-                    """
+                        "Receive notifications when a timer ends."
                     )
                     .font(.footnote)
                     .foregroundStyle(.secondary)
