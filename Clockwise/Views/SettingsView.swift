@@ -16,16 +16,36 @@ struct SettingsView: View {
     @State private var errorLocalizedDescription: String? = nil
 
     var body: some View {
-        Form {
-            Toggle("Open on login", isOn: $launchAtLogin)
-            
-            if let errorLocalizedDescription = errorLocalizedDescription {
-                Text(errorLocalizedDescription)
-                    .foregroundStyle(.red)
+        HStack {
+            Spacer()
+            VStack(alignment: .leading, spacing: 16) {
+                Toggle("Open on login", isOn: $launchAtLogin)
+                
+                VStack(alignment: .leading) {
+                    Text("Notification permission: not granted")
+                    
+                    Button("Grant notification permission") {
+                        
+                    }
+                    Text(
+                    """
+                    Grant permission to send timer notifications.
+                    """
+                    )
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                }
+
+                if let errorLocalizedDescription = errorLocalizedDescription {
+                    Text(errorLocalizedDescription)
+                        .foregroundStyle(.red)
+                }
+                
             }
+            Spacer()
         }
         .padding()
-        .frame(width: 400)
+        .frame(width: 480)
         .onChange(of: launchAtLogin) {
             updateAppServiceRegistration()
         }
