@@ -14,6 +14,8 @@ struct SettingsView: View {
     private let appService = SMAppService()
     
     @State private var errorLocalizedDescription: String? = nil
+    
+    @Environment(\.requestNotificationPermission) private var requestNotificationPermission
 
     var body: some View {
         HStack {
@@ -24,9 +26,7 @@ struct SettingsView: View {
                 VStack(alignment: .leading) {
                     Text("Notification permission: not granted")
                     
-                    Button("Grant notification permission") {
-                        
-                    }
+                    Button("Grant notification permission", action: grantNotificationPermission)
                     Text(
                     """
                     Grant permission to send timer notifications.
@@ -71,8 +71,21 @@ struct SettingsView: View {
             launchAtLogin = true
         }
     }
+    
+    private func grantNotificationPermission() {
+        Task {
+            do {
+                try await requestNotificationPermission()
+            } catch {
+                errorLocalizedDescription = error.localizedDescription
+            }
+        }
+    }
 }
 
 #Preview {
     SettingsView()
+        .environment(\.requestNotificationPermission) {
+            print("Requesting notification permission")
+        }
 }

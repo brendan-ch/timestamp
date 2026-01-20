@@ -35,6 +35,8 @@ struct ClockwiseApp: App {
         }
         
         Settings(content: SettingsView.init)
+            .environment(\.requestNotificationPermission, requestNotificationPermission)
+            .environment(\.getNotificationPermissionStatus, getNotificationPermissionStatus)
     }
     
     private func updateMenuBarText() {
