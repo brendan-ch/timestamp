@@ -15,7 +15,7 @@ struct ContentView: View {
     /// Must be kept in sync manually with the timer context.
     @State private var timerModeSelection: TimerContext.TimerMode = .focusMode
     
-    @State private var renderedNotificationPermissionStatus: UNAuthorizationStatus = .notDetermined
+    @AppStorage(UserDefaults.hideGrantNotificationPermissionTooltip) private var hideGrantNotificationPermissionTooltip: Bool = false
     
     private var isRunning: Bool {
         switch timerContext.state {
@@ -54,6 +54,10 @@ struct ContentView: View {
                 }
             }
             .frame(minHeight: 32)
+            
+            if !hideGrantNotificationPermissionTooltip {
+                NotificationPermissionCalloutView()
+            }
             
             ClockView()
                 .environment(timerContext)

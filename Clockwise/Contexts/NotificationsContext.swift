@@ -11,20 +11,8 @@ import UserNotifications
 @Observable
 class NotificationsContext {
     private var notificationCenter = UNUserNotificationCenter.current()
-    private let userDefaults: UserDefaults
     
-    init(
-        userDefaults: UserDefaults = .standard
-    ) {
-        self.userDefaults = userDefaults
-        setupUserDefaults()
-    }
-    
-    private func setupUserDefaults() {
-        userDefaults.set(false, forKey: UserDefaults.hideGrantNotificationPermissionTooltip)
-    }
-    
-    // MARK: Bridge to UNUserNotificationCenter
+    // MARK: Notification permissions
     
     func requestNotificationPermission() async throws {
         try await notificationCenter.requestAuthorization(
@@ -36,7 +24,6 @@ class NotificationsContext {
         await notificationCenter.notificationSettings().authorizationStatus
     }
     
-    // MARK: UI controls
-    
-    
+    // MARK: Notification sending
+    // TODO: Implement notification sending
 }
