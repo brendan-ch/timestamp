@@ -7,8 +7,8 @@
 
 import XCTest
 
+@MainActor
 final class ClockwiseUITestsLaunchTests: XCTestCase {
-
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true
     }
@@ -17,7 +17,6 @@ final class ClockwiseUITestsLaunchTests: XCTestCase {
         continueAfterFailure = false
     }
 
-    @MainActor
     func testLaunch() throws {
         let app = XCUIApplication()
         app.launch()

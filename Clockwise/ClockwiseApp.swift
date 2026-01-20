@@ -37,5 +37,7 @@ struct ClockwiseApp: App {
                 menuBarText = nil
             }
         }
+        
+        Settings(content: SettingsView.init)
     }
 }

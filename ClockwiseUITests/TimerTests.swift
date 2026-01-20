@@ -8,7 +8,6 @@
 import XCTest
 
 final class TimerTests: ClockwiseBaseUITests {
-    @MainActor
     func testStartStopTimer() throws {
         app.launch()
         app/*@START_MENU_TOKEN@*/.statusItems/*[[".menuBars.statusItems[\"Duration\"]",".statusItems",".statusItems[\"Duration\"]"],[[[-1,2],[-1,1],[-1,0]]],[1]]@END_MENU_TOKEN@*/.firstMatch.click()
@@ -20,7 +19,6 @@ final class TimerTests: ClockwiseBaseUITests {
         XCTAssert(app.staticTexts["25:00"].waitForExistence(timeout: 5))
     }
     
-    @MainActor
     func testTimerAutomaticallyStops() throws {
         app.launchArguments += ["-focusIntervalSeconds", "2"]
         app.launch()

@@ -8,7 +8,6 @@
 import XCTest
 
 final class TimerModeTests: ClockwiseBaseUITests {
-    @MainActor
     func testChangingModeChangesTimer() throws {
         app.launch()
         app.statusItems.firstMatch.click()
@@ -19,7 +18,6 @@ final class TimerModeTests: ClockwiseBaseUITests {
         XCTAssert(app.staticTexts["25:00"].waitForExistence(timeout: 5))
     }
     
-    @MainActor
     func testCannotChangeModeDuringTimerRunning() throws {
         app.launch()
         app.statusItems.firstMatch.click()

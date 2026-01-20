@@ -7,6 +7,7 @@
 
 import XCTest
 
+@MainActor
 class ClockwiseBaseUITests: XCTestCase {
     var app: XCUIApplication = XCUIApplication()
     
