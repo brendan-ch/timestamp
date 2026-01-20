@@ -26,18 +26,22 @@ struct ClockwiseApp: App {
         }
         .menuBarExtraStyle(.window)
         .onChange(of: timerContext.state) {
-            if case .running(let timeRemaining, _) = timerContext.state {
-                let minutesToDisplay = Int(timeRemaining / 60)
-                if minutesToDisplay == 0 {
-                    menuBarText = "<1m"
-                } else {
-                    menuBarText = "\(minutesToDisplay)m"
-                }
-            } else {
-                menuBarText = nil
-            }
+            updateMenuBarText()
         }
         
         Settings(content: SettingsView.init)
+    }
+    
+    private func updateMenuBarText() {
+        if case .running(let timeRemaining, _) = timerContext.state {
+            let minutesToDisplay = Int(timeRemaining / 60)
+            if minutesToDisplay == 0 {
+                menuBarText = "<1m"
+            } else {
+                menuBarText = "\(minutesToDisplay)m"
+            }
+        } else {
+            menuBarText = nil
+        }
     }
 }
