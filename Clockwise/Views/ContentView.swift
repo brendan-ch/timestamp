@@ -10,6 +10,7 @@ import UserNotifications
 
 struct ContentView: View {
     @Environment(TimerContext.self) private var timerContext
+    @Environment(NotificationsContext.self) private var notificationsContext
     
     /// The timer mode selection to show in the UI.
     /// Must be kept in sync manually with the timer context.
@@ -56,7 +57,9 @@ struct ContentView: View {
             .frame(minHeight: 32)
             
             if !hideGrantNotificationPermissionTooltip {
-                NotificationPermissionCalloutView()
+                NotificationPermissionCalloutView() {
+                    hideGrantNotificationPermissionTooltip = true
+                }
             }
             
             ClockView()
@@ -90,12 +93,14 @@ struct ContentView: View {
         .frame(width: 320)
     }
     
-    func quit() {
+    private func quit() {
         NSApp.terminate(nil)
     }
+    
 }
 
 #Preview {
     ContentView()
         .environment(TimerContext())
+        .environment(NotificationsContext())
 }
