@@ -7,6 +7,7 @@
 
 import SwiftUI
 import ServiceManagement
+import UserNotifications
 
 @MainActor  // for some reason the provided Settings struct throws a warning if this isn't here
 struct SettingsView: View {
@@ -16,6 +17,8 @@ struct SettingsView: View {
     @State private var errorLocalizedDescription: String? = nil
     
     @Environment(\.requestNotificationPermission) private var requestNotificationPermission
+    @Environment(\.getNotificationPermissionStatus) private var getNotificationPermissionStatus
+    @State private var renderedNotificationPermissionStatus: UNAuthorizationStatus = .notDetermined
 
     var body: some View {
         HStack {
@@ -26,7 +29,11 @@ struct SettingsView: View {
                 VStack(alignment: .leading) {
                     Text("Notification permission: not granted")
                     
-                    Button("Grant notification permission", action: grantNotificationPermission)
+                    if renderedNotificationPermissionStatus == .notDetermined {
+                        Button("Grant notification permission", action: grantNotificationPermission)
+                            .buttonStyle(.borderedProminent)
+                    }
+                    Button("Open system notification settings", action: openNotificationSystemSettingsPane)
                     Text(
                     """
                     Grant permission to send timer notifications.
@@ -34,6 +41,7 @@ struct SettingsView: View {
                     )
                     .font(.footnote)
                     .foregroundStyle(.secondary)
+                    
                 }
 
                 if let errorLocalizedDescription = errorLocalizedDescription {
@@ -49,9 +57,7 @@ struct SettingsView: View {
         .onChange(of: launchAtLogin) {
             updateAppServiceRegistration()
         }
-        .onAppear {
-            initializeOpenOnLoginState()
-        }
+        .onAppear(perform: initializeAllStates)
     }
     
     private func updateAppServiceRegistration() {
@@ -66,12 +72,23 @@ struct SettingsView: View {
         }
     }
     
+    private func initializeAllStates() {
+        initializeOpenOnLoginState()
+        initializeNotificationPermissionState()
+    }
+    
     private func initializeOpenOnLoginState() {
         if appService.status == .enabled {
             launchAtLogin = true
         }
     }
     
+    private func initializeNotificationPermissionState() {
+        Task {
+            renderedNotificationPermissionStatus = await getNotificationPermissionStatus()
+        }
+    }
+
     private func grantNotificationPermission() {
         Task {
             do {
@@ -79,6 +96,12 @@ struct SettingsView: View {
             } catch {
                 errorLocalizedDescription = error.localizedDescription
             }
+        }
+    }
+    
+    private func openNotificationSystemSettingsPane() {
+        if let url = URL(string: "x-apple.systempreferences:com.apple.preference.notifications") {
+            NSWorkspace.shared.open(url)
         }
     }
 }
