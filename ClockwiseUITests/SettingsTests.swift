@@ -19,10 +19,11 @@ final class SettingsTests: ClockwiseBaseUITests {
         
         let checkbox = app/*@START_MENU_TOKEN@*/.checkBoxes["Open on login"]/*[[".groups.checkBoxes[\"Open on login\"]",".checkBoxes",".checkBoxes[\"Open on login\"]"],[[[-1,2],[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/
         // See https://stackoverflow.com/questions/49822365/ios-xctests-how-to-verify-checkbox-button-is-checked-or-not
-        if checkbox.value as? Int64 == 0 {
+        if checkbox.value as? Int64 == 1 {
             checkbox.click()
         }
-        
+        checkbox.click()
+
         app.terminate()
         app.launch()
         app.statusItems.firstMatch.click()
