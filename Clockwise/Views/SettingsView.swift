@@ -10,13 +10,13 @@ import ServiceManagement
 import UserNotifications
 
 @MainActor  // for some reason the provided Settings struct throws a warning if this isn't here
-struct SettingsView: View {
+struct SettingsView: NotificationsContextView {
     @State private var launchAtLogin = false
     private let appService = SMAppService()
     
     @State private var errorLocalizedDescription: String? = nil
     
-    @Environment(NotificationsContext.self) private var notificationsContext
+    @Environment(NotificationsContext.self) var notificationsContext
     @State private var renderedNotificationPermissionStatus: UNAuthorizationStatus = .notDetermined
 
     var body: some View {
@@ -66,7 +66,7 @@ struct SettingsView: View {
                 try appService.unregister()
             }
         } catch {
-            errorLocalizedDescription = error.localizedDescription
+            handleError(error)
         }
     }
     
@@ -86,15 +86,9 @@ struct SettingsView: View {
             renderedNotificationPermissionStatus = await notificationsContext.getNotificationPermissionStatus()
         }
     }
-
-    private func grantNotificationPermission() {
-        Task {
-            do {
-                try await notificationsContext.requestNotificationPermission()
-            } catch {
-                errorLocalizedDescription = error.localizedDescription
-            }
-        }
+    
+    func handleError(_ error: any Error) {
+        errorLocalizedDescription = error.localizedDescription
     }
     
     private func openNotificationSystemSettingsPane() {

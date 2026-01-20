@@ -7,10 +7,10 @@
 
 import SwiftUI
 
-struct NotificationPermissionCalloutView: View {
+struct NotificationPermissionCalloutView: NotificationsContextView {
     let onDismiss: () -> Void
     
-    @Environment(NotificationsContext.self) private var notificationsContext
+    @Environment(NotificationsContext.self) var notificationsContext
     @State private var errorLocalizedDescription: String? = nil
     
     var body: some View {
@@ -33,14 +33,8 @@ struct NotificationPermissionCalloutView: View {
         .backgroundStyle(.thickMaterial)
     }
     
-    private func grantNotificationPermission() {
-        Task {
-            do {
-                try await notificationsContext.requestNotificationPermission()
-            } catch {
-                errorLocalizedDescription = error.localizedDescription
-            }
-        }
+    func handleError(_ error: any Error) {
+        errorLocalizedDescription = error.localizedDescription
     }
 }
 
