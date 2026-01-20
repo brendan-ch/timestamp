@@ -6,16 +6,21 @@
 //
 
 import SwiftUI
+import UserNotifications
 
 @main
 struct ClockwiseApp: App {
     @State private var timerContext = TimerContext()
     @State private var menuBarText: String? = nil
     
+    private var notificationCenter = UNUserNotificationCenter.current()
+    
     var body: some Scene {
         MenuBarExtra {
             ContentView()
                 .environment(timerContext)
+                .environment(\.requestNotificationPermission, requestNotificationPermission)
+                .environment(\.getNotificationPermissionStatus, getNotificationPermissionStatus)
         } label: {
             HStack {
                 Image(systemName: "hourglass")
@@ -43,5 +48,15 @@ struct ClockwiseApp: App {
         } else {
             menuBarText = nil
         }
+    }
+    
+    private func requestNotificationPermission() async throws {
+        try await notificationCenter.requestAuthorization(
+            options: [.alert, .sound]
+        )
+    }
+    
+    private func getNotificationPermissionStatus() async -> UNAuthorizationStatus {
+        await notificationCenter.notificationSettings().authorizationStatus
     }
 }
