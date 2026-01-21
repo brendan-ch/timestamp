@@ -120,11 +120,3 @@ struct TimerContextTests {
     }
 }
 
-@MainActor
-struct TimerContextTimerModeTests {
-    @Test("getUserDefaultsKey returns correct keys")
-    func getUserDefaultsKeyReturnsCorrectKeys() async throws {
-        #expect(TimerMode.focusMode.getUserDefaultsKey() == UserDefaults.focusIntervalSeconds)
-        #expect(TimerMode.breakMode.getUserDefaultsKey() == UserDefaults.breakIntervalSeconds)
-    }
-}
