@@ -53,13 +53,19 @@ class ClockwiseBaseUITests: XCTestCase {
         // If the app has previously requested to send notifications, their choice will be "remembered"
         // This code resets that state
         systempreferencesApp.activate()
-        var clockwiseListItem = systempreferencesApp.buttons["Clockwise, Sounds, Desktop"]
-        
         // Can take a while for the settings to show up on first launch
-        if clockwiseListItem.waitForExistence(timeout: 20) {
+        let applicationNotificationsHeading = systempreferencesApp.staticTexts["Application Notifications"]
+        if !applicationNotificationsHeading.waitForExistence(timeout: 20) {
+            app.terminate()
+            return
+        }
+        
+        var clockwiseListItem = systempreferencesApp.buttons["Clockwise, Off"]
+        
+        if clockwiseListItem.waitForExistence(timeout: 2) {
             resetNotificationsForListItem(clockwiseListItem)
         }
-        clockwiseListItem = systempreferencesApp.buttons["Clockwise, Off"]
+        clockwiseListItem = systempreferencesApp.buttons["Clockwise, Sounds, Desktop"]
         if clockwiseListItem.waitForExistence(timeout: 2) {
             resetNotificationsForListItem(clockwiseListItem)
         }
