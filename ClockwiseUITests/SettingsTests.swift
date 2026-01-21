@@ -67,7 +67,9 @@ final class SettingsTests: ClockwiseBaseUITests {
         // This code resets that state
         systempreferencesApp.activate()
         var clockwiseListItem = systempreferencesApp.buttons["Clockwise, Sounds, Desktop"]
-        if clockwiseListItem.waitForExistence(timeout: 2) {
+        
+        // Can take a while for the settings to show up on first launch
+        if clockwiseListItem.waitForExistence(timeout: 20) {
             resetNotificationsForListItem(clockwiseListItem)
         }
         clockwiseListItem = systempreferencesApp.buttons["Clockwise, Off"]
