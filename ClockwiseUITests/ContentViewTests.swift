@@ -33,6 +33,9 @@ final class ContentViewTests: ClockwiseBaseUITests {
         
         app.buttons["Grant permission"].firstMatch.click()
         
+        app.menuButtons["Options"].firstMatch.click()
+        app.menuItems["Settings"].firstMatch.click()
+        
         // Check whether app shows up in system notification settings
         // The CI runner doesn't show notifications on the top right
         app.buttons["Open system notification settings"].firstMatch.click()
