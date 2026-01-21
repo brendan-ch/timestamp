@@ -17,7 +17,11 @@ struct ContentView: View {
     /// Must be kept in sync manually with the timer context.
     @State private var timerModeSelection: TimerContext.TimerMode = .focusMode
     
-    @AppStorage(UserDefaults.hideGrantNotificationPermissionTooltip) private var hideGrantNotificationPermissionTooltip: Bool = false
+    @State private var hideGrantNotificationPermissionCallout = false {
+        didSet {
+            UserDefaults.standard.set(hideGrantNotificationPermissionCallout, forKey: UserDefaults.hideGrantNotificationPermissionCallout)
+        }
+    }
     
     private var isRunning: Bool {
         switch timerContext.state {
@@ -55,9 +59,9 @@ struct ContentView: View {
             }
             .frame(minHeight: 32)
             
-            if !hideGrantNotificationPermissionTooltip {
+            if !hideGrantNotificationPermissionCallout {
                 NotificationPermissionCalloutView() {
-                    hideGrantNotificationPermissionTooltip = true
+                    hideGrantNotificationPermissionCallout = true
                 }
             }
             
@@ -79,6 +83,9 @@ struct ContentView: View {
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
             }
+        }
+        .onAppear {
+            hideGrantNotificationPermissionCallout = UserDefaults.standard.bool(forKey: UserDefaults.hideGrantNotificationPermissionCallout)
         }
         .onChange(of: timerModeSelection) {
             try? timerContext.updatePendingTimerFromProvidedMode(timerModeSelection)

@@ -11,5 +11,5 @@ extension UserDefaults {
     static var focusIntervalSeconds: String { "focusIntervalSeconds" }
     static var breakIntervalSeconds: String { "breakIntervalSeconds" }
     
-    static var hideGrantNotificationPermissionTooltip: String { "hideGrantNotificationPermissionTooltip" }
+    static var hideGrantNotificationPermissionCallout: String { "hideGrantNotificationPermissionCallout" }
 }
