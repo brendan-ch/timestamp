@@ -33,9 +33,12 @@ final class ContentViewTests: ClockwiseBaseUITests {
         
         app.buttons["Grant permission"].firstMatch.click()
         
-        let notificationcenteruiApp = XCUIApplication(bundleIdentifier: "com.apple.notificationcenterui")
-        notificationcenteruiApp.activate()
-        XCTAssert(notificationcenteruiApp.staticTexts["“Clockwise” Notifications"].firstMatch.waitForExistence(timeout: 5))
+        // Check whether app shows up in system notification settings
+        // The CI runner doesn't show notifications on the top right
+        app.buttons["Open system notification settings"].firstMatch.click()
+        let systempreferencesApp = XCUIApplication(bundleIdentifier: "com.apple.systempreferences")
+        systempreferencesApp.activate()
+        XCTAssert(systempreferencesApp.buttons["Clockwise, Off"].waitForExistence(timeout: 5))
     }
     
     func testDismissNotificationPermissionCalloutDismissesCallout() throws {
