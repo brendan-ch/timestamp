@@ -28,7 +28,7 @@ final class ContentViewTests: ClockwiseBaseUITests {
     func testGrantNotificationPermissionInCalloutAsksForPermission() throws {
         resetNotificationPermissions()
         
-        app.launchArguments += ["-hideGrantNotificationPermissionTooltip", "0"]
+        app.launchArguments += ["-hideGrantNotificationPermissionCallout", "0"]
         launchAndOpenMenuBarWindow()
         
         app.buttons["Grant permission"].firstMatch.click()
@@ -39,7 +39,7 @@ final class ContentViewTests: ClockwiseBaseUITests {
     }
     
     func testDismissNotificationPermissionCalloutDismissesCallout() throws {
-        app.launchArguments += ["-hideGrantNotificationPermissionTooltip", "0"]
+        app.launchArguments += ["-hideGrantNotificationPermissionCallout", "0"]
         launchAndOpenMenuBarWindow()
         
         app.buttons["Dismiss"].firstMatch.click()
