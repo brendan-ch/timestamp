@@ -126,16 +126,5 @@ internal class TimerContext {
         case timerNotRunning
     }
     
-    enum TimerMode {
-        case focusMode
-        case breakMode
-        
-        func getUserDefaultsKey() -> String {
-            if self == .focusMode {
-                return UserDefaults.focusIntervalSeconds
-            } else {
-                return UserDefaults.breakIntervalSeconds
-            }
-        }
-    }
+    
 }
