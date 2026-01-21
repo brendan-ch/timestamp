@@ -10,4 +10,6 @@ import Foundation
 extension UserDefaults {
     static var focusIntervalSeconds: String { "focusIntervalSeconds" }
     static var breakIntervalSeconds: String { "breakIntervalSeconds" }
+    
+    static var hideGrantNotificationPermissionCallout: String { "hideGrantNotificationPermissionCallout" }
 }

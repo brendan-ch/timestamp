@@ -6,13 +6,22 @@
 //
 
 import SwiftUI
+import UserNotifications
 
 struct ContentView: View {
     @Environment(TimerContext.self) private var timerContext
     
+    @Environment(\.openSettings) private var openSettings
+    
     /// The timer mode selection to show in the UI.
     /// Must be kept in sync manually with the timer context.
     @State private var timerModeSelection: TimerContext.TimerMode = .focusMode
+    
+    @State private var hideGrantNotificationPermissionCallout = false {
+        didSet {
+            UserDefaults.standard.set(hideGrantNotificationPermissionCallout, forKey: UserDefaults.hideGrantNotificationPermissionCallout)
+        }
+    }
     
     private var isRunning: Bool {
         switch timerContext.state {
@@ -41,9 +50,7 @@ struct ContentView: View {
                 Spacer()
                 
                 Menu {
-                    SettingsLink {
-                        Text("Settings")
-                    }
+                    Button("Settings", action: openAndShowSettings)
                     Button("Quit", action: quit)
                 } label: {
                     Image(systemName: "ellipsis")
@@ -51,6 +58,12 @@ struct ContentView: View {
                 }
             }
             .frame(minHeight: 32)
+            
+            if !hideGrantNotificationPermissionCallout {
+                NotificationPermissionCalloutView() {
+                    hideGrantNotificationPermissionCallout = true
+                }
+            }
             
             ClockView()
                 .environment(timerContext)
@@ -71,6 +84,9 @@ struct ContentView: View {
                 .controlSize(.large)
             }
         }
+        .onAppear {
+            hideGrantNotificationPermissionCallout = UserDefaults.standard.bool(forKey: UserDefaults.hideGrantNotificationPermissionCallout)
+        }
         .onChange(of: timerModeSelection) {
             try? timerContext.updatePendingTimerFromProvidedMode(timerModeSelection)
         }
@@ -83,8 +99,14 @@ struct ContentView: View {
         .frame(width: 320)
     }
     
-    func quit() {
+    private func quit() {
         NSApp.terminate(nil)
+    }
+    
+    private func openAndShowSettings() {
+        NSApp.keyWindow?.close()
+        NSApplication.shared.activate()
+        openSettings()
     }
 }
 
