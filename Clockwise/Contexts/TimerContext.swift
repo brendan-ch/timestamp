@@ -108,6 +108,8 @@ internal class TimerContext {
         throw TimerContextError.timerNotRunning
     }
 
+    /// Stops the timer, setting the state back to `State.pending`.
+    /// If the timer has expired, this method sets the timer mode to the next mode. Otherwise, the method sets the same timer mode.
     func stop() throws {
         if case .running(_) = state {
             let currentTimerMode: TimerMode
@@ -117,8 +119,10 @@ internal class TimerContext {
                 currentTimerMode = .focusMode
             }
             
-            state = .pending(mode: currentTimerMode)
-            lastTimerStopMetadata = .init(mode: currentTimerMode, wasBecauseTimerExpired: lastTimerStartMetadata?.timerExpired ?? false)
+            let wasBecauseTimerExpired = lastTimerStartMetadata?.timerExpired ?? false
+            
+            state = .pending(mode: wasBecauseTimerExpired ? currentTimerMode.next() : currentTimerMode)
+            lastTimerStopMetadata = .init(mode: currentTimerMode, wasBecauseTimerExpired: wasBecauseTimerExpired)
         } else {
             throw TimerContextError.timerNotRunning
         }

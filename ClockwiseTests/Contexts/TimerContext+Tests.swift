@@ -84,7 +84,7 @@ struct TimerContextTests {
         }
     }
     
-    @Test("start starts a timer which automatically stops when done")
+    @Test("start starts a timer which automatically sets correct state with next timer mode, when done")
     func startTimerAutomaticallyStops() async throws {
         defaults.removePersistentDomain(forName: #file)
         defaults.set(1, forKey: UserDefaults.focusIntervalSeconds)
@@ -92,7 +92,7 @@ struct TimerContextTests {
         let context = TimerContext(userDefaults: defaults)
         try context.start()
         try? await Task.sleep(for: .seconds(3))
-        #expect(context.state == .pending(mode: .focusMode))
+        #expect(context.state == .pending(mode: .breakMode))
         #expect(context.lastTimerStopMetadata == .init(
             mode: .focusMode,
             wasBecauseTimerExpired: true
@@ -124,7 +124,7 @@ struct TimerContextTests {
     }
     
     static let sleepTimes = [0, 2]
-    @Test("stop stops a running timer", arguments: sleepTimes)
+    @Test("stop sets state back to pending, with same mode", arguments: sleepTimes)
     func stopStopsRunningTimer(sleepTime: Int) async throws {
         defaults.removePersistentDomain(forName: #file)
         

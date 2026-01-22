@@ -11,6 +11,15 @@ import UserNotifications
 enum TimerMode {
     case focusMode
     case breakMode
+    
+    func next() -> TimerMode {
+        switch self {
+        case .focusMode:
+            .breakMode
+        case .breakMode:
+            .focusMode
+        }
+    }
 }
 
 // MARK: UserDefaults keys for storing time intervals
