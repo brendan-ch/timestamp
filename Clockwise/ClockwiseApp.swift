@@ -31,13 +31,16 @@ struct ClockwiseApp: App {
         .onChange(of: timerContext.state) {
             updateMenuBarText()
         }
+        .onChange(of: timerContext.lastTimerStopMetadata) {
+            scheduleNotificationIfTimerHasEnded()
+        }
         
         Settings(content: SettingsView.init)
             .environment(notificationsContext)
     }
     
     private func updateMenuBarText() {
-        if case .running(let timeRemaining, _) = timerContext.state {
+        if case .running(let timeRemaining) = timerContext.state {
             let minutesToDisplay = Int(timeRemaining / 60)
             if minutesToDisplay == 0 {
                 menuBarText = "<1m"
@@ -46,6 +49,15 @@ struct ClockwiseApp: App {
             }
         } else {
             menuBarText = nil
+        }
+    }
+    
+    private func scheduleNotificationIfTimerHasEnded() {
+        if let lastTimerStopMetadata = timerContext.lastTimerStopMetadata {
+            if lastTimerStopMetadata.wasBecauseTimerExpired {
+                let request = lastTimerStopMetadata.mode.constructEndingNotification()
+                notificationsContext.scheduleIfHasPermission(request)
+            }
         }
     }
 }

@@ -36,7 +36,7 @@ struct ClockView: View {
     }
     
     private func updateDisplayedTimeRemaining() {
-        if case .running(let timeRemaining, _) = timerContext.state {
+        if case .running(let timeRemaining) = timerContext.state {
             displayedTimeRemaining = timeRemainingFormatter.string(from: timeRemaining) ?? "---"
         } else if case .pending(let mode) = timerContext.state {
             // Note: this will not sync if UserDefaults value changes

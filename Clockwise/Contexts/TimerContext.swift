@@ -17,6 +17,14 @@ internal class TimerContext {
     
     private(set) var state: State = .pending(mode: .focusMode)
     
+    /// Stores information about the last timer start.
+    /// Does not get cleared on timer stop or expiration.
+    private(set) var lastTimerStartMetadata: TimerStartMetadata? = nil
+    
+    /// Stores information about the last time the timer was stopped.
+    /// Does not get cleared on timer start.
+    private(set) var lastTimerStopMetadata: TimerStopMetadata? = nil
+    
     private let updateInterval: Duration
     private let userDefaults: UserDefaults
     private var timerUpdateTask: Task<Void, Error>? = nil
@@ -48,12 +56,17 @@ internal class TimerContext {
         }
     }
     
-    func start() throws {
+    func start(startingTime: Date = .now) throws {
         if case .pending(let mode) = state {
             do {
                 let seconds = userDefaults.integer(forKey: mode.getUserDefaultsKey())
-                state = .running(timeRemaining: TimeInterval(seconds), starter: .init(mode: .focusMode, start: .now, startingInterval: TimeInterval(seconds)))
-                try setTimerUpdateTask()
+                state = .running(timeRemaining: TimeInterval(seconds))
+                
+                let timerStartMetadata: TimerStartMetadata = .init(mode: mode, start: startingTime, startingInterval: TimeInterval(seconds))
+                try setTimerUpdateTask(metadata: timerStartMetadata)
+                
+                // Publish as the last step
+                lastTimerStartMetadata = timerStartMetadata
             } catch {
                 state = .pending(mode: mode)
                 throw error
@@ -63,20 +76,19 @@ internal class TimerContext {
         }
     }
     
-    private func setTimerUpdateTask() throws {
+    private func setTimerUpdateTask(metadata: TimerStartMetadata) throws {
         let timerSequence = try getTimerSequence()
         
         timerUpdateTask = Task {
             for await _ in timerSequence {
-                if !Task.isCancelled, case .running(_, let starter) = state {
-                    if starter.derivedTimeRemaining < 0 {
+                if !Task.isCancelled, case .running(_) = state {
+                    if metadata.derivedTimeRemaining < 0 {
                         try stop()
                         break
                     }
                     
                     state = .running(
-                        timeRemaining: starter.derivedTimeRemaining,
-                        starter: starter
+                        timeRemaining: metadata.derivedTimeRemaining,
                     )
                 } else {
                     break
@@ -86,7 +98,7 @@ internal class TimerContext {
     }
     
     private func getTimerSequence() throws -> AsyncTimerSequence<ContinuousClock> {
-        if case .running(_, _) = state {
+        if case .running(_) = state {
             let clock = ContinuousClock()
             let timerSequence = AsyncTimerSequence(interval: updateInterval, tolerance: .nanoseconds(1), clock: clock)
             
@@ -96,9 +108,21 @@ internal class TimerContext {
         throw TimerContextError.timerNotRunning
     }
 
-    func stop() throws {
-        if case .running(_, let starter) = state {
-            state = .pending(mode: starter.mode)
+    /// Stops the timer, setting the state back to `State.pending`.
+    /// If the timer has expired, this method sets the timer mode to the next mode. Otherwise, the method sets the same timer mode.
+    func stop(recordedAt: Date = .now) throws {
+        if case .running(_) = state {
+            let currentTimerMode: TimerMode
+            if let lastTimerStartMetadata {
+                currentTimerMode = lastTimerStartMetadata.mode
+            } else {
+                currentTimerMode = .focusMode
+            }
+            
+            let wasBecauseTimerExpired = lastTimerStartMetadata?.timerExpired ?? false
+            
+            state = .pending(mode: wasBecauseTimerExpired ? currentTimerMode.next() : currentTimerMode)
+            lastTimerStopMetadata = .init(mode: currentTimerMode, wasBecauseTimerExpired: wasBecauseTimerExpired, recordedAt: recordedAt)
         } else {
             throw TimerContextError.timerNotRunning
         }
@@ -108,34 +132,39 @@ internal class TimerContext {
     
     enum State: Equatable {
         case pending(mode: TimerMode)
-        case running(timeRemaining: TimeInterval, starter: StarterInfo)
+        case running(timeRemaining: TimeInterval)
+    }
+    
+    /// Metadata about a timer start.
+    struct TimerStartMetadata: Equatable {
+        let mode: TimerMode
+        let start: Date
+        let startingInterval: TimeInterval
+
+        var derivedTimeRemaining: TimeInterval {
+            startingInterval - (Date.now.timeIntervalSince(start))
+        }
         
-        struct StarterInfo: Equatable {
-            let mode: TimerMode
-            let start: Date
-            let startingInterval: TimeInterval
-            
-            var derivedTimeRemaining: TimeInterval {
-                startingInterval - (Date.now.timeIntervalSince(start))
-            }
+        var timerExpired: Bool {
+            derivedTimeRemaining <= 0
         }
     }
     
+    struct TimerStopMetadata: Equatable {
+        /// The mode that the stopped timer was in.
+        let mode: TimerMode
+        let wasBecauseTimerExpired: Bool
+        let recordedAt: Date
+        
+        init(mode: TimerMode, wasBecauseTimerExpired: Bool, recordedAt: Date = .now) {
+            self.mode = mode
+            self.wasBecauseTimerExpired = wasBecauseTimerExpired
+            self.recordedAt = recordedAt
+        }
+    }
+
     enum TimerContextError: Error {
         case timerAlreadyRunning
         case timerNotRunning
-    }
-    
-    enum TimerMode {
-        case focusMode
-        case breakMode
-        
-        func getUserDefaultsKey() -> String {
-            if self == .focusMode {
-                return UserDefaults.focusIntervalSeconds
-            } else {
-                return UserDefaults.breakIntervalSeconds
-            }
-        }
     }
 }

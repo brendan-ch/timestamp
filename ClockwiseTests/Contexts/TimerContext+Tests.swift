@@ -53,7 +53,7 @@ struct TimerContextTests {
             try context.updatePendingTimerFromProvidedMode(.breakMode)
         }
         
-        if case .running(let timeRemaining, _) = context.state {
+        if case .running(let timeRemaining) = context.state {
             #expect(timeRemaining == 1500.0)
         } else {
             Issue.record("State is not .running")
@@ -67,9 +67,8 @@ struct TimerContextTests {
         try context.start()
         try? await Task.sleep(for: .seconds(2.5))
         
-        if case .running(let timeRemaining, let starter) = context.state {
+        if case .running(let timeRemaining) = context.state {
             #expect(timeRemaining > 1497.0 && timeRemaining < 1499.0)
-            #expect(starter.mode == .focusMode)
         } else {
             Issue.record("State is not .running")
         }
@@ -85,7 +84,7 @@ struct TimerContextTests {
         }
     }
     
-    @Test("start starts a timer which automatically stops when done")
+    @Test("start starts a timer which automatically sets correct state with next timer mode, when done")
     func startTimerAutomaticallyStops() async throws {
         defaults.removePersistentDomain(forName: #file)
         defaults.set(1, forKey: UserDefaults.focusIntervalSeconds)
@@ -93,20 +92,53 @@ struct TimerContextTests {
         let context = TimerContext(userDefaults: defaults)
         try context.start()
         try? await Task.sleep(for: .seconds(3))
-        #expect(context.state == .pending(mode: .focusMode))
+        #expect(context.state == .pending(mode: .breakMode))
+        #expect(context.lastTimerStopMetadata?.mode == .focusMode)
+        #expect(context.lastTimerStopMetadata?.wasBecauseTimerExpired == true)
+    }
+    
+    @Test("start sets correct metadata object for timer start")
+    func startTimerSetsCorrectStartMetadataObject() async throws {
+        defaults.removePersistentDomain(forName: #file)
+        
+        let context = TimerContext(userDefaults: defaults)
+        let expectedStarter: TimerContext.TimerStartMetadata
+        let startingTime = Date.now
+        
+        if case .pending(let mode) = context.state {
+            expectedStarter = .init(mode: mode, start: startingTime, startingInterval: 25 * 60)
+        } else {
+            Issue.record("context not in pending mode")
+            return
+        }
+        
+        try context.start(startingTime: startingTime)
+        
+        if case .running(_) = context.state {
+            #expect(context.lastTimerStartMetadata == expectedStarter)
+        } else {
+            Issue.record("State is not .running")
+        }
     }
     
     static let sleepTimes = [0, 2]
-    @Test("stop stops a running timer", arguments: sleepTimes)
+    @Test("stop sets state back to pending, with same mode", arguments: sleepTimes)
     func stopStopsRunningTimer(sleepTime: Int) async throws {
         defaults.removePersistentDomain(forName: #file)
+        
+        let recordedAt: Date = .now
         
         let context = TimerContext(userDefaults: defaults)
         try context.start()
         try? await Task.sleep(for: .seconds(sleepTime))
-        try context.stop()
+        try context.stop(recordedAt: recordedAt)
         try? await Task.sleep(for: .seconds(sleepTime))
         #expect(context.state == .pending(mode: .focusMode))
+        #expect(context.lastTimerStopMetadata == .init(
+            mode: .focusMode,
+            wasBecauseTimerExpired: false,
+            recordedAt: recordedAt
+        ))
     }
     
     @Test("stop throws if timer is not running")
@@ -120,11 +152,3 @@ struct TimerContextTests {
     }
 }
 
-@MainActor
-struct TimerContextTimerModeTests {
-    @Test("getUserDefaultsKey returns correct keys")
-    func getUserDefaultsKeyReturnsCorrectKeys() async throws {
-        #expect(TimerContext.TimerMode.focusMode.getUserDefaultsKey() == UserDefaults.focusIntervalSeconds)
-        #expect(TimerContext.TimerMode.breakMode.getUserDefaultsKey() == UserDefaults.breakIntervalSeconds)
-    }
-}
