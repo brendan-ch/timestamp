@@ -25,5 +25,7 @@ class NotificationsContext {
     }
     
     // MARK: Notification sending
-    // TODO: Implement notification sending
+    func schedule(_ request: UNNotificationRequest) {
+        notificationCenter.add(request)
+    }
 }

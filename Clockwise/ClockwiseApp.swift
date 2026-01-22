@@ -14,6 +14,8 @@ struct ClockwiseApp: App {
     @State private var notificationsContext = NotificationsContext()
     @State private var menuBarText: String? = nil
     
+    @State private var lastState: TimerContext.State? = nil
+    
     var body: some Scene {
         MenuBarExtra {
             ContentView()
@@ -30,6 +32,7 @@ struct ClockwiseApp: App {
         .menuBarExtraStyle(.window)
         .onChange(of: timerContext.state) {
             updateMenuBarText()
+            scheduleNotificationIfTimerHasEnded()
         }
         
         Settings(content: SettingsView.init)
@@ -47,5 +50,16 @@ struct ClockwiseApp: App {
         } else {
             menuBarText = nil
         }
+    }
+    
+    private func scheduleNotificationIfTimerHasEnded() {
+        if case .running(_, let starter) = lastState {
+            if case .pending(_) = timerContext.state {
+                let request = starter.mode.constructEndingNotification()
+                notificationsContext.schedule(request)
+            }
+        }
+        
+        lastState = timerContext.state
     }
 }
