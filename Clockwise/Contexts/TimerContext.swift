@@ -15,7 +15,7 @@ internal class TimerContext {
         UserDefaults.breakIntervalSeconds: 5 * 60,
     ]
     
-    private(set) var state: State = .pending(mode: .focusMode)
+    private(set) var state: State = .pending(mode: .focusMode, timerEnded: false)
     
     private let updateInterval: Duration
     private let userDefaults: UserDefaults
@@ -41,21 +41,21 @@ internal class TimerContext {
     }
     
     func updatePendingTimerFromProvidedMode(_ mode: TimerMode) throws {
-        if case .pending(_) = state {
-            state = .pending(mode: mode)
+        if case .pending(_, _) = state {
+            state = .pending(mode: mode, timerEnded: false)
         } else {
             throw TimerContextError.timerAlreadyRunning
         }
     }
     
     func start(startingTime: Date = .now) throws {
-        if case .pending(let mode) = state {
+        if case .pending(let mode, _) = state {
             do {
                 let seconds = userDefaults.integer(forKey: mode.getUserDefaultsKey())
                 state = .running(timeRemaining: TimeInterval(seconds), starter: .init(mode: mode, start: startingTime, startingInterval: TimeInterval(seconds)))
                 try setTimerUpdateTask()
             } catch {
-                state = .pending(mode: mode)
+                state = .pending(mode: mode, timerEnded: false)
                 throw error
             }
         } else {
@@ -70,7 +70,7 @@ internal class TimerContext {
             for await _ in timerSequence {
                 if !Task.isCancelled, case .running(_, let starter) = state {
                     if starter.derivedTimeRemaining < 0 {
-                        try stop()
+                        try stop(timerEnded: true)
                         break
                     }
                     
@@ -96,9 +96,9 @@ internal class TimerContext {
         throw TimerContextError.timerNotRunning
     }
 
-    func stop() throws {
+    func stop(timerEnded: Bool = false) throws {
         if case .running(_, let starter) = state {
-            state = .pending(mode: starter.mode)
+            state = .pending(mode: starter.mode, timerEnded: timerEnded)
         } else {
             throw TimerContextError.timerNotRunning
         }
@@ -107,7 +107,7 @@ internal class TimerContext {
     // MARK: Custom data structures
     
     enum State: Equatable {
-        case pending(mode: TimerMode)
+        case pending(mode: TimerMode, timerEnded: Bool)
         case running(timeRemaining: TimeInterval, starter: StarterInfo)
         
         struct StarterInfo: Equatable {

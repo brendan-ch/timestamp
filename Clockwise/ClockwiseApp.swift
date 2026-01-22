@@ -54,9 +54,11 @@ struct ClockwiseApp: App {
     
     private func scheduleNotificationIfTimerHasEnded() {
         if case .running(_, let starter) = lastState {
-            if case .pending(_) = timerContext.state {
-                let request = starter.mode.constructEndingNotification()
-                notificationsContext.schedule(request)
+            if case .pending(_, let timerEnded) = timerContext.state {
+                if timerEnded {
+                    let request = starter.mode.constructEndingNotification()
+                    notificationsContext.schedule(request)
+                }
             }
         }
         
