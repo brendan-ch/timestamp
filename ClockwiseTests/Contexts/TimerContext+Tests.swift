@@ -93,6 +93,10 @@ struct TimerContextTests {
         try context.start()
         try? await Task.sleep(for: .seconds(3))
         #expect(context.state == .pending(mode: .focusMode))
+        #expect(context.lastTimerStopMetadata == .init(
+            mode: .focusMode,
+            wasBecauseTimerExpired: true
+        ))
     }
     
     @Test("start sets correct metadata object for timer start")
@@ -130,6 +134,10 @@ struct TimerContextTests {
         try context.stop()
         try? await Task.sleep(for: .seconds(sleepTime))
         #expect(context.state == .pending(mode: .focusMode))
+        #expect(context.lastTimerStopMetadata == .init(
+            mode: .focusMode,
+            wasBecauseTimerExpired: false
+        ))
     }
     
     @Test("stop throws if timer is not running")

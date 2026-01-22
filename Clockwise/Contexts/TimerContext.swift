@@ -21,6 +21,10 @@ internal class TimerContext {
     /// Does not get cleared on timer stop or expiration.
     private(set) var lastTimerStartMetadata: TimerStartMetadata? = nil
     
+    /// Stores information about the last time the timer was stopped.
+    /// Does not get cleared on timer start.
+    private(set) var lastTimerStopMetadata: TimerStopMetadata? = nil
+    
     private let updateInterval: Duration
     private let userDefaults: UserDefaults
     private var timerUpdateTask: Task<Void, Error>? = nil
@@ -79,7 +83,7 @@ internal class TimerContext {
             for await _ in timerSequence {
                 if !Task.isCancelled, case .running(_) = state {
                     if metadata.derivedTimeRemaining < 0 {
-                        try stop(timerEnded: true)
+                        try stop()
                         break
                     }
                     
@@ -104,13 +108,17 @@ internal class TimerContext {
         throw TimerContextError.timerNotRunning
     }
 
-    func stop(timerEnded: Bool = false) throws {
+    func stop() throws {
         if case .running(_) = state {
+            let currentTimerMode: TimerMode
             if let lastTimerStartMetadata {
-                state = .pending(mode: lastTimerStartMetadata.mode)
+                currentTimerMode = lastTimerStartMetadata.mode
             } else {
-                state = .pending(mode: .focusMode)
+                currentTimerMode = .focusMode
             }
+            
+            state = .pending(mode: currentTimerMode)
+            lastTimerStopMetadata = .init(mode: currentTimerMode, wasBecauseTimerExpired: lastTimerStartMetadata?.timerExpired ?? false)
         } else {
             throw TimerContextError.timerNotRunning
         }
@@ -136,6 +144,12 @@ internal class TimerContext {
         var timerExpired: Bool {
             derivedTimeRemaining <= 0
         }
+    }
+    
+    struct TimerStopMetadata: Equatable {
+        /// The mode that the stopped timer was in.
+        let mode: TimerMode
+        let wasBecauseTimerExpired: Bool
     }
 
     enum TimerContextError: Error {

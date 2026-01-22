@@ -30,6 +30,8 @@ struct ClockwiseApp: App {
         .menuBarExtraStyle(.window)
         .onChange(of: timerContext.state) {
             updateMenuBarText()
+        }
+        .onChange(of: timerContext.lastTimerStopMetadata) {
             scheduleNotificationIfTimerHasEnded()
         }
         
@@ -51,12 +53,10 @@ struct ClockwiseApp: App {
     }
     
     private func scheduleNotificationIfTimerHasEnded() {
-        if case .pending(_) = timerContext.state {
-            if let lastTimerStartMetadata = timerContext.lastTimerStartMetadata {
-                if lastTimerStartMetadata.timerExpired {
-                    let request = lastTimerStartMetadata.mode.constructEndingNotification()
-                    notificationsContext.schedule(request)
-                }
+        if let lastTimerStopMetadata = timerContext.lastTimerStopMetadata {
+            if lastTimerStopMetadata.wasBecauseTimerExpired {
+                let request = lastTimerStopMetadata.mode.constructEndingNotification()
+                notificationsContext.schedule(request)
             }
         }
     }
