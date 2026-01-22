@@ -93,10 +93,8 @@ struct TimerContextTests {
         try context.start()
         try? await Task.sleep(for: .seconds(3))
         #expect(context.state == .pending(mode: .breakMode))
-        #expect(context.lastTimerStopMetadata == .init(
-            mode: .focusMode,
-            wasBecauseTimerExpired: true
-        ))
+        #expect(context.lastTimerStopMetadata?.mode == .focusMode)
+        #expect(context.lastTimerStopMetadata?.wasBecauseTimerExpired == true)
     }
     
     @Test("start sets correct metadata object for timer start")
@@ -128,15 +126,18 @@ struct TimerContextTests {
     func stopStopsRunningTimer(sleepTime: Int) async throws {
         defaults.removePersistentDomain(forName: #file)
         
+        let recordedAt: Date = .now
+        
         let context = TimerContext(userDefaults: defaults)
         try context.start()
         try? await Task.sleep(for: .seconds(sleepTime))
-        try context.stop()
+        try context.stop(recordedAt: recordedAt)
         try? await Task.sleep(for: .seconds(sleepTime))
         #expect(context.state == .pending(mode: .focusMode))
         #expect(context.lastTimerStopMetadata == .init(
             mode: .focusMode,
-            wasBecauseTimerExpired: false
+            wasBecauseTimerExpired: false,
+            recordedAt: recordedAt
         ))
     }
     

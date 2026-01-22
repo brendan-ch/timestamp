@@ -110,7 +110,7 @@ internal class TimerContext {
 
     /// Stops the timer, setting the state back to `State.pending`.
     /// If the timer has expired, this method sets the timer mode to the next mode. Otherwise, the method sets the same timer mode.
-    func stop() throws {
+    func stop(recordedAt: Date = .now) throws {
         if case .running(_) = state {
             let currentTimerMode: TimerMode
             if let lastTimerStartMetadata {
@@ -122,7 +122,7 @@ internal class TimerContext {
             let wasBecauseTimerExpired = lastTimerStartMetadata?.timerExpired ?? false
             
             state = .pending(mode: wasBecauseTimerExpired ? currentTimerMode.next() : currentTimerMode)
-            lastTimerStopMetadata = .init(mode: currentTimerMode, wasBecauseTimerExpired: wasBecauseTimerExpired)
+            lastTimerStopMetadata = .init(mode: currentTimerMode, wasBecauseTimerExpired: wasBecauseTimerExpired, recordedAt: recordedAt)
         } else {
             throw TimerContextError.timerNotRunning
         }
@@ -140,7 +140,6 @@ internal class TimerContext {
         let mode: TimerMode
         let start: Date
         let startingInterval: TimeInterval
-        let recordedAt: Date = .now
 
         var derivedTimeRemaining: TimeInterval {
             startingInterval - (Date.now.timeIntervalSince(start))
@@ -155,7 +154,13 @@ internal class TimerContext {
         /// The mode that the stopped timer was in.
         let mode: TimerMode
         let wasBecauseTimerExpired: Bool
-        let recordedAt: Date = .now
+        let recordedAt: Date
+        
+        init(mode: TimerMode, wasBecauseTimerExpired: Bool, recordedAt: Date = .now) {
+            self.mode = mode
+            self.wasBecauseTimerExpired = wasBecauseTimerExpired
+            self.recordedAt = recordedAt
+        }
     }
 
     enum TimerContextError: Error {
