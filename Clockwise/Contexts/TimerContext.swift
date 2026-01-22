@@ -140,7 +140,8 @@ internal class TimerContext {
         let mode: TimerMode
         let start: Date
         let startingInterval: TimeInterval
-        
+        let recordedAt: Date = .now
+
         var derivedTimeRemaining: TimeInterval {
             startingInterval - (Date.now.timeIntervalSince(start))
         }
@@ -154,6 +155,7 @@ internal class TimerContext {
         /// The mode that the stopped timer was in.
         let mode: TimerMode
         let wasBecauseTimerExpired: Bool
+        let recordedAt: Date = .now
     }
 
     enum TimerContextError: Error {
