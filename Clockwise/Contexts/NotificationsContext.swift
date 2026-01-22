@@ -31,8 +31,14 @@ class NotificationsContext: NSObject, UNUserNotificationCenterDelegate {
     }
     
     // MARK: Notification sending
-    func schedule(_ request: UNNotificationRequest) {
-        notificationCenter.add(request)
+    func scheduleIfHasPermission(_ request: UNNotificationRequest) {
+        // Checking for permission first avoids spamming the user with notifications if they give permission later
+        Task {
+            let status = await getNotificationPermissionStatus()
+            if status == .authorized || status == .provisional {
+                try? await notificationCenter.add(request)
+            }
+        }
     }
     
     // MARK: Responding to notification clicks

@@ -56,7 +56,7 @@ struct ClockwiseApp: App {
         if let lastTimerStopMetadata = timerContext.lastTimerStopMetadata {
             if lastTimerStopMetadata.wasBecauseTimerExpired {
                 let request = lastTimerStopMetadata.mode.constructEndingNotification()
-                notificationsContext.schedule(request)
+                notificationsContext.scheduleIfHasPermission(request)
             }
         }
     }
