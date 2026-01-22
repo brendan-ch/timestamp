@@ -96,6 +96,28 @@ struct TimerContextTests {
         #expect(context.state == .pending(mode: .focusMode))
     }
     
+    @Test("start sets correct starter object")
+    func startTimerSetsCorrectStarterObjectInState() async throws {
+        defaults.removePersistentDomain(forName: #file)
+        
+        let context = TimerContext(userDefaults: defaults)
+        let expectedStarter: TimerContext.State.StarterInfo
+        let startingTime = Date.now
+        
+        if case .pending(let mode) = context.state {
+            expectedStarter = .init(mode: mode, start: startingTime, startingInterval: 25 * 60)
+        } else {
+            Issue.record("context not in pending mode")
+            return
+        }
+        
+        try context.start(startingTime: startingTime)
+        
+        if case .running(_, let starter) = context.state {
+            #expect(starter == expectedStarter)
+        }
+    }
+    
     static let sleepTimes = [0, 2]
     @Test("stop stops a running timer", arguments: sleepTimes)
     func stopStopsRunningTimer(sleepTime: Int) async throws {

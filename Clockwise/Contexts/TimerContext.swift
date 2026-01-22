@@ -48,11 +48,11 @@ internal class TimerContext {
         }
     }
     
-    func start() throws {
+    func start(startingTime: Date = .now) throws {
         if case .pending(let mode) = state {
             do {
                 let seconds = userDefaults.integer(forKey: mode.getUserDefaultsKey())
-                state = .running(timeRemaining: TimeInterval(seconds), starter: .init(mode: .focusMode, start: .now, startingInterval: TimeInterval(seconds)))
+                state = .running(timeRemaining: TimeInterval(seconds), starter: .init(mode: mode, start: startingTime, startingInterval: TimeInterval(seconds)))
                 try setTimerUpdateTask()
             } catch {
                 state = .pending(mode: mode)
