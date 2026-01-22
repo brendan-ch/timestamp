@@ -14,9 +14,12 @@ struct SettingsView: View {
     var body: some View {
         HStack {
             Spacer()
-            VStack(alignment: .leading, spacing: 16) {
-                OpenOnLoginSettingView()
-                NotificationPermissionSettingView()
+            Form {
+                VStack(alignment: .leading, spacing: 16) {
+                    OpenOnLoginSettingView()
+                    NotificationPermissionSettingView()
+                    TimerIntervalSettingView()
+                }
             }
             Spacer()
         }
