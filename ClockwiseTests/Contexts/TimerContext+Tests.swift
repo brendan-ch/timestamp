@@ -53,7 +53,7 @@ struct TimerContextTests {
             try context.updatePendingTimerFromProvidedMode(.breakMode)
         }
         
-        if case .running(let timeRemaining, _) = context.state {
+        if case .running(let timeRemaining) = context.state {
             #expect(timeRemaining == 1500.0)
         } else {
             Issue.record("State is not .running")
@@ -67,9 +67,8 @@ struct TimerContextTests {
         try context.start()
         try? await Task.sleep(for: .seconds(2.5))
         
-        if case .running(let timeRemaining, let starter) = context.state {
+        if case .running(let timeRemaining) = context.state {
             #expect(timeRemaining > 1497.0 && timeRemaining < 1499.0)
-            #expect(starter.mode == .focusMode)
         } else {
             Issue.record("State is not .running")
         }
@@ -96,12 +95,12 @@ struct TimerContextTests {
         #expect(context.state == .pending(mode: .focusMode))
     }
     
-    @Test("start sets correct starter object")
-    func startTimerSetsCorrectStarterObjectInState() async throws {
+    @Test("start sets correct metadata object for timer start")
+    func startTimerSetsCorrectStartMetadataObject() async throws {
         defaults.removePersistentDomain(forName: #file)
         
         let context = TimerContext(userDefaults: defaults)
-        let expectedStarter: TimerContext.State.StarterInfo
+        let expectedStarter: TimerContext.TimerStartMetadata
         let startingTime = Date.now
         
         if case .pending(let mode) = context.state {
@@ -113,8 +112,10 @@ struct TimerContextTests {
         
         try context.start(startingTime: startingTime)
         
-        if case .running(_, let starter) = context.state {
-            #expect(starter == expectedStarter)
+        if case .running(_) = context.state {
+            #expect(context.lastTimerStartMetadata == expectedStarter)
+        } else {
+            Issue.record("State is not .running")
         }
     }
     

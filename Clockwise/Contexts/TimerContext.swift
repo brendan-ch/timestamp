@@ -15,7 +15,11 @@ internal class TimerContext {
         UserDefaults.breakIntervalSeconds: 5 * 60,
     ]
     
-    private(set) var state: State = .pending(mode: .focusMode, timerEnded: false)
+    private(set) var state: State = .pending(mode: .focusMode)
+    
+    /// Stores information about the last timer start.
+    /// Does not get cleared on timer stop or expiration.
+    private(set) var lastTimerStartMetadata: TimerStartMetadata? = nil
     
     private let updateInterval: Duration
     private let userDefaults: UserDefaults
@@ -41,21 +45,26 @@ internal class TimerContext {
     }
     
     func updatePendingTimerFromProvidedMode(_ mode: TimerMode) throws {
-        if case .pending(_, _) = state {
-            state = .pending(mode: mode, timerEnded: false)
+        if case .pending(_) = state {
+            state = .pending(mode: mode)
         } else {
             throw TimerContextError.timerAlreadyRunning
         }
     }
     
     func start(startingTime: Date = .now) throws {
-        if case .pending(let mode, _) = state {
+        if case .pending(let mode) = state {
             do {
                 let seconds = userDefaults.integer(forKey: mode.getUserDefaultsKey())
-                state = .running(timeRemaining: TimeInterval(seconds), starter: .init(mode: mode, start: startingTime, startingInterval: TimeInterval(seconds)))
-                try setTimerUpdateTask()
+                state = .running(timeRemaining: TimeInterval(seconds))
+                
+                let timerStartMetadata: TimerStartMetadata = .init(mode: mode, start: startingTime, startingInterval: TimeInterval(seconds))
+                try setTimerUpdateTask(metadata: timerStartMetadata)
+                
+                // Publish as the last step
+                lastTimerStartMetadata = timerStartMetadata
             } catch {
-                state = .pending(mode: mode, timerEnded: false)
+                state = .pending(mode: mode)
                 throw error
             }
         } else {
@@ -63,20 +72,19 @@ internal class TimerContext {
         }
     }
     
-    private func setTimerUpdateTask() throws {
+    private func setTimerUpdateTask(metadata: TimerStartMetadata) throws {
         let timerSequence = try getTimerSequence()
         
         timerUpdateTask = Task {
             for await _ in timerSequence {
-                if !Task.isCancelled, case .running(_, let starter) = state {
-                    if starter.derivedTimeRemaining < 0 {
+                if !Task.isCancelled, case .running(_) = state {
+                    if metadata.derivedTimeRemaining < 0 {
                         try stop(timerEnded: true)
                         break
                     }
                     
                     state = .running(
-                        timeRemaining: starter.derivedTimeRemaining,
-                        starter: starter
+                        timeRemaining: metadata.derivedTimeRemaining,
                     )
                 } else {
                     break
@@ -86,7 +94,7 @@ internal class TimerContext {
     }
     
     private func getTimerSequence() throws -> AsyncTimerSequence<ContinuousClock> {
-        if case .running(_, _) = state {
+        if case .running(_) = state {
             let clock = ContinuousClock()
             let timerSequence = AsyncTimerSequence(interval: updateInterval, tolerance: .nanoseconds(1), clock: clock)
             
@@ -97,8 +105,12 @@ internal class TimerContext {
     }
 
     func stop(timerEnded: Bool = false) throws {
-        if case .running(_, let starter) = state {
-            state = .pending(mode: starter.mode, timerEnded: timerEnded)
+        if case .running(_) = state {
+            if let lastTimerStartMetadata {
+                state = .pending(mode: lastTimerStartMetadata.mode)
+            } else {
+                state = .pending(mode: .focusMode)
+            }
         } else {
             throw TimerContextError.timerNotRunning
         }
@@ -107,24 +119,27 @@ internal class TimerContext {
     // MARK: Custom data structures
     
     enum State: Equatable {
-        case pending(mode: TimerMode, timerEnded: Bool)
-        case running(timeRemaining: TimeInterval, starter: StarterInfo)
-        
-        struct StarterInfo: Equatable {
-            let mode: TimerMode
-            let start: Date
-            let startingInterval: TimeInterval
-            
-            var derivedTimeRemaining: TimeInterval {
-                startingInterval - (Date.now.timeIntervalSince(start))
-            }
-        }
+        case pending(mode: TimerMode)
+        case running(timeRemaining: TimeInterval)
     }
     
+    /// Metadata about a timer start.
+    struct TimerStartMetadata: Equatable {
+        let mode: TimerMode
+        let start: Date
+        let startingInterval: TimeInterval
+        
+        var derivedTimeRemaining: TimeInterval {
+            startingInterval - (Date.now.timeIntervalSince(start))
+        }
+        
+        var timerExpired: Bool {
+            derivedTimeRemaining <= 0
+        }
+    }
+
     enum TimerContextError: Error {
         case timerAlreadyRunning
         case timerNotRunning
     }
-    
-    
 }

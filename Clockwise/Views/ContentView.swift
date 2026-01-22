@@ -27,7 +27,7 @@ struct ContentView: View {
         switch timerContext.state {
         case .pending(_):
             return false
-        case .running(_, _):
+        case .running(_):
             return true
         }
 
@@ -91,7 +91,7 @@ struct ContentView: View {
             try? timerContext.updatePendingTimerFromProvidedMode(timerModeSelection)
         }
         .onChange(of: timerContext.state) {
-            if case .pending(let mode, _) = timerContext.state {
+            if case .pending(let mode) = timerContext.state {
                 timerModeSelection = mode
             }
         }

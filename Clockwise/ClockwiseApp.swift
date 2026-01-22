@@ -14,8 +14,6 @@ struct ClockwiseApp: App {
     @State private var notificationsContext = NotificationsContext()
     @State private var menuBarText: String? = nil
     
-    @State private var lastState: TimerContext.State? = nil
-    
     var body: some Scene {
         MenuBarExtra {
             ContentView()
@@ -40,7 +38,7 @@ struct ClockwiseApp: App {
     }
     
     private func updateMenuBarText() {
-        if case .running(let timeRemaining, _) = timerContext.state {
+        if case .running(let timeRemaining) = timerContext.state {
             let minutesToDisplay = Int(timeRemaining / 60)
             if minutesToDisplay == 0 {
                 menuBarText = "<1m"
@@ -53,15 +51,13 @@ struct ClockwiseApp: App {
     }
     
     private func scheduleNotificationIfTimerHasEnded() {
-        if case .running(_, let starter) = lastState {
-            if case .pending(_, let timerEnded) = timerContext.state {
-                if timerEnded {
-                    let request = starter.mode.constructEndingNotification()
+        if case .pending(_) = timerContext.state {
+            if let lastTimerStartMetadata = timerContext.lastTimerStartMetadata {
+                if lastTimerStartMetadata.timerExpired {
+                    let request = lastTimerStartMetadata.mode.constructEndingNotification()
                     notificationsContext.schedule(request)
                 }
             }
         }
-        
-        lastState = timerContext.state
     }
 }
