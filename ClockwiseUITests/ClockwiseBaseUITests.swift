@@ -26,6 +26,14 @@ class ClockwiseBaseUITests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
     
+    // MARK: Launch helpers
+    
+    /// For tests which depend on the default focus/break times of 25/5,
+    /// use this method to initialize the UserDefaults container.
+    func appendDefaultTimerLaunchArguments() {
+        app.launchArguments += ["-focusIntervalSeconds", "1500", "-breakIntervalSeconds", "300"]
+    }
+    
     func launchAndOpenMenuBarWindow() {
         app.launch()
         app.statusItems.firstMatch.click()
@@ -37,6 +45,8 @@ class ClockwiseBaseUITests: XCTestCase {
         app.menuButtons["Options"].firstMatch.click()
         app.menuItems["Settings"].firstMatch.click()
     }
+    
+    // MARK: Reusable flows
     
     func resetNotificationPermissions() {
         let systempreferencesApp = XCUIApplication(bundleIdentifier: "com.apple.systempreferences")

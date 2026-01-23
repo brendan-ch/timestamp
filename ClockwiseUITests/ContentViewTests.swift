@@ -9,6 +9,7 @@ import XCTest
 
 final class ContentViewTests: ClockwiseBaseUITests {
     func testChangingModeChangesTimer() throws {
+        appendDefaultTimerLaunchArguments()
         launchAndOpenMenuBarWindow()
 
         app.radioButtons["Break"].firstMatch.click()
