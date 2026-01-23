@@ -56,4 +56,45 @@ final class SettingsTests: ClockwiseBaseUITests {
         systempreferencesApp.activate()
         XCTAssert(systempreferencesApp.buttons["Clockwise, Off"].waitForExistence(timeout: 5))
     }
+    
+    func testSetMinutesChangesTimerDisplay() throws {
+        launchAndOpenSettings()
+        
+        let focusTextField = app.textFields["Minutes for focus"]
+        focusTextField.doubleClick()
+        focusTextField.typeKey(.delete, modifierFlags: [])
+        focusTextField.typeText("30")
+        
+        let breakTextField = app.textFields["Minutes for break"]
+        breakTextField.doubleClick()
+        breakTextField.typeKey(.delete, modifierFlags: [])
+        breakTextField.typeText("15")
+        
+        app.terminate()
+        launchAndOpenMenuBarWindow()
+        
+        XCTAssert(app.staticTexts["30:00"].waitForExistence(timeout: 5))
+        app.radioButtons["Break"].tap()
+        XCTAssert(app.staticTexts["15:00"].waitForExistence(timeout: 5))
+    }
+    
+    func testInputInvalidMinutesDoesNotSave() throws {
+        launchAndOpenSettings()
+        
+        let focusTextField = app.textFields["Minutes for focus"]
+        let previousFocusTextFieldValue = focusTextField.value as? String
+        focusTextField.doubleClick()
+        focusTextField.typeKey(.delete, modifierFlags: [])
+        focusTextField.typeText("abcd")
+
+        let breakTextField = app.textFields["Minutes for break"]
+        let previousBreakTextFieldValue = breakTextField.value as? String
+        breakTextField.doubleClick()
+        breakTextField.typeKey(.delete, modifierFlags: [])
+        breakTextField.typeText("efgh")
+        breakTextField.typeKey(.enter, modifierFlags: [])
+        
+        XCTAssert(focusTextField.value as? String == previousFocusTextFieldValue)
+        XCTAssert(breakTextField.value as? String == previousBreakTextFieldValue)
+    }
 }
