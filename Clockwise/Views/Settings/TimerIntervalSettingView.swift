@@ -19,10 +19,12 @@ struct TimerIntervalSettingView: View {
     
     var body: some View {
         VStack {
-            TextField("Focus number of minutes", value: $focusIntervalMinutes, formatter: formatter)
+            TextField("Minutes for focus", value: $focusIntervalMinutes, formatter: formatter)
                 .frame(maxWidth: 240)
-            TextField("Break number of minutes", value: $breakIntervalMinutes, formatter: formatter)
+                .accessibilityLabel("Minutes for focus")
+            TextField("Minutes for break", value: $breakIntervalMinutes, formatter: formatter)
                 .frame(maxWidth: 240)
+                .accessibilityLabel("Minutes for break")
         }
         .onAppear {
             initializeTextFields()
