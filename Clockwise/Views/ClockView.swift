@@ -44,14 +44,9 @@ struct ClockView: View {
                     .bold()
                     .accessibilityLabel("Time remaining")
                     .overlay(alignment: .bottom) {
-                        if let endingTime = endingTime {
-                            Text(endingTime)
-                            // By default, the bottom of the text is aligned with the bottom of the overlay
-                            // This overwrites the bottom alignment guide with the top
-                            // See: https://stackoverflow.com/questions/68554713/swiftui-position-an-overlay-relative-to-its-anchor
-                                .alignmentGuide(.bottom) { $0[.top] }
-                                .foregroundStyle(.secondary)
-                        }
+                        Text(endingTime ?? "")
+                            .alignmentGuide(.bottom) { $0[.top] }
+                            .foregroundStyle(.secondary)
                     }
             
         }
