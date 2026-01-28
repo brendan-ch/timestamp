@@ -82,6 +82,7 @@ struct ContentView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
+                .keyboardShortcut(.space, modifiers: [])
             }
         }
         .onAppear {
