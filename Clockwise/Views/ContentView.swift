@@ -37,7 +37,7 @@ struct ContentView: View {
     }
     
     var body: some View {
-        VStack {
+        VStack(spacing: 16) {
             HStack {
                 if !isRunning {
                     Picker("Timer mode", selection: $timerModeSelection) {
