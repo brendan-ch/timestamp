@@ -41,14 +41,14 @@ struct ClockView: View {
         }
         .frame(width: 256, height: 256)
         .onChange(of: timerContext.state) {
-            updateDisplayedTimeRemaining()
+            updateRenderedTimer()
         }
         .onAppear {
-            updateDisplayedTimeRemaining()
+            updateRenderedTimer()
         }
     }
     
-    private func updateDisplayedTimeRemaining() {
+    private func updateRenderedTimer() {
         if case .running(let timeRemaining) = timerContext.state {
             displayedTimeRemaining = timeRemainingFormatter.string(from: timeRemaining) ?? "---"
             
@@ -64,6 +64,7 @@ struct ClockView: View {
             
             let seconds = UserDefaults.standard.integer(forKey: mode.getUserDefaultsKey())
             displayedTimeRemaining = timeRemainingFormatter.string(from: TimeInterval(seconds)) ?? "---"
+            circularTrim = 1
         }
     }
 }
