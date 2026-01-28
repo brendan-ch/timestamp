@@ -10,6 +10,7 @@ import SwiftUI
 struct ClockView: View {
     @State private var displayedTimeRemaining = "---"
     @State private var circularTrim = 1.0
+    @State private var endingTime: String? = nil
     @Environment(TimerContext.self) private var timerContext
     
     // From https://stackoverflow.com/questions/77237979/how-to-display-countdown-timer
@@ -18,6 +19,12 @@ struct ClockView: View {
         formatter.allowedUnits = [.minute, .second]
         formatter.unitsStyle = .positional
         formatter.zeroFormattingBehavior = .pad
+        return formatter
+    }()
+    
+    let endingTimeFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "h:mm a"
         return formatter
     }()
     
@@ -37,29 +44,42 @@ struct ClockView: View {
                     .bold()
                     .accessibilityLabel("Time remaining")
                     .overlay(alignment: .bottom) {
-                        Text("10:55")
+                        if let endingTime = endingTime {
+                            Text(endingTime)
                             // By default, the bottom of the text is aligned with the bottom of the overlay
                             // This overwrites the bottom alignment guide with the top
                             // See: https://stackoverflow.com/questions/68554713/swiftui-position-an-overlay-relative-to-its-anchor
-                            .alignmentGuide(.bottom) { $0[.top] }
-                            .foregroundStyle(.secondary)
+                                .alignmentGuide(.bottom) { $0[.top] }
+                                .foregroundStyle(.secondary)
+                        }
                     }
             
         }
         .frame(width: 256, height: 256)
         .onChange(of: timerContext.state) {
-            update()
+            updateTimeRemainingUI()
         }
         .onAppear {
-            update()
+            updateTimeRemainingUI()
         }
     }
     
-    private func update() {
+    
+    private func updateTimeRemainingUI() {
         updateRenderedTimer()
+        updateEndingTime()
         updateCircularTrim()
     }
     
+    private func updateEndingTime() {
+        if case .running(let timeRemaining) = timerContext.state {
+            let endingTimeAsDate = Date.now.addingTimeInterval(timeRemaining)
+            endingTime = endingTimeFormatter.string(from: endingTimeAsDate)
+        } else {
+            endingTime = nil
+        }
+    }
+
     private func updateRenderedTimer() {
         if case .running(let timeRemaining) = timerContext.state {
             displayedTimeRemaining = timeRemainingFormatter.string(from: timeRemaining) ?? "---"
