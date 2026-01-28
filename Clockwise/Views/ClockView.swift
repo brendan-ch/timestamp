@@ -39,16 +39,16 @@ struct ClockView: View {
                 .rotationEffect(.degrees(270))
                 .padding(4)
             
-                Text(displayedTimeRemaining)
-                    .font(.system(size: 64))
-                    .bold()
-                    .accessibilityLabel("Time remaining: \(displayedTimeRemaining)")
-                    .overlay(alignment: .bottom) {
-                        Text(endingTime ?? "")
-                            .alignmentGuide(.bottom) { $0[.top] }
-                            .foregroundStyle(.secondary)
-                            .accessibilityLabel("Ending time: \(endingTime ?? "N/A")")
-                    }
+            Text(displayedTimeRemaining)
+                .font(.system(size: 64))
+                .bold()
+                .accessibilityLabel("Time remaining: \(displayedTimeRemaining)")
+                .overlay(alignment: .bottom) {
+                    Text(endingTime ?? "")
+                        .alignmentGuide(.bottom) { $0[.top] }
+                        .foregroundStyle(.secondary)
+                        .accessibilityLabel("Ending time: \(endingTime ?? "N/A")")
+                }
             
         }
         .frame(width: 256, height: 256)
