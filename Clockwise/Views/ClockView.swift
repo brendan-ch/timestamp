@@ -41,29 +41,43 @@ struct ClockView: View {
         }
         .frame(width: 256, height: 256)
         .onChange(of: timerContext.state) {
-            updateRenderedTimer()
+            update()
         }
         .onAppear {
-            updateRenderedTimer()
+            update(animate: false)
         }
+    }
+    
+    private func update(animate isAnimated: Bool = true) {
+        updateRenderedTimer()
+        updateCircularTrim(animate: isAnimated)
     }
     
     private func updateRenderedTimer() {
         if case .running(let timeRemaining) = timerContext.state {
             displayedTimeRemaining = timeRemainingFormatter.string(from: timeRemaining) ?? "---"
-            
-            if let startingInterval = timerContext.lastTimerStartMetadata?.startingInterval {
-                withAnimation {
-                    circularTrim = timeRemaining / startingInterval
-                }
-            }
-            
         } else if case .pending(let mode) = timerContext.state {
             // Note: this will not sync if UserDefaults value changes
             // Recommended to add another change publisher (e.g. through @Environment) when this value changes
             
             let seconds = UserDefaults.standard.integer(forKey: mode.getUserDefaultsKey())
             displayedTimeRemaining = timeRemainingFormatter.string(from: TimeInterval(seconds)) ?? "---"
+        }
+    }
+    
+    private func updateCircularTrim(animate isAnimated: Bool = true) {
+        if case .running(let timeRemaining) = timerContext.state {
+            if let startingInterval = timerContext.lastTimerStartMetadata?.startingInterval {
+                
+                if isAnimated {
+                    withAnimation {
+                        circularTrim = timeRemaining / startingInterval
+                    }
+                } else {
+                    circularTrim = timeRemaining / startingInterval
+                }
+            }
+        } else if case .pending(_) = timerContext.state {
             circularTrim = 1
         }
     }
