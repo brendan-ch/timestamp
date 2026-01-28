@@ -46,6 +46,14 @@ struct ContentView: View {
                     }
                     .labelsHidden()
                     .pickerStyle(.segmented)
+                    
+                    Button {
+                        timerModeSelection = timerModeSelection.next()
+                    } label: {
+                        EmptyView()
+                    }
+                    .hidden()
+                    .keyboardShortcut("`", modifiers: [])
                 }
                 Spacer()
                 
