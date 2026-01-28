@@ -46,11 +46,21 @@ struct ContentView: View {
                     }
                     .labelsHidden()
                     .pickerStyle(.segmented)
+                    
+                    Button {
+                        timerModeSelection = timerModeSelection.next()
+                    } label: {
+                        EmptyView()
+                    }
+                    .hidden()
+                    .keyboardShortcut("`", modifiers: [])
                 }
                 Spacer()
                 
                 Menu {
-                    Button("Settings", action: openAndShowSettings)
+                    Button("Settings") {
+                        openSettings()
+                    }
                     Button("Quit", action: quit)
                 } label: {
                     Image(systemName: "ellipsis")
@@ -82,6 +92,7 @@ struct ContentView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
+                .keyboardShortcut(.space, modifiers: [])
             }
         }
         .onAppear {
@@ -101,12 +112,6 @@ struct ContentView: View {
     
     private func quit() {
         NSApp.terminate(nil)
-    }
-    
-    private func openAndShowSettings() {
-        NSApp.keyWindow?.close()
-        NSApplication.shared.activate()
-        openSettings()
     }
 }
 
