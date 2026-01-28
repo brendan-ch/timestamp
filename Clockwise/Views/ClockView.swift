@@ -22,22 +22,29 @@ struct ClockView: View {
     }()
     
     var body: some View {
-        VStack {
-            ZStack {
-                Circle()
-                    .trim(from: 0, to: circularTrim)
-                    .stroke(
-                        Color.blue,
-                        lineWidth: 8
-                    )
-                    .rotationEffect(.degrees(270))
-                    .padding(4)
-                
+        ZStack {
+            Circle()
+                .trim(from: 0, to: circularTrim)
+                .stroke(
+                    Color.blue,
+                    lineWidth: 8
+                )
+                .rotationEffect(.degrees(270))
+                .padding(4)
+            
                 Text(displayedTimeRemaining)
                     .font(.system(size: 64))
                     .bold()
                     .accessibilityLabel("Time remaining")
-            }
+                    .overlay(alignment: .bottom) {
+                        Text("10:55")
+                            // By default, the bottom of the text is aligned with the bottom of the overlay
+                            // This overwrites the bottom alignment guide with the top
+                            // See: https://stackoverflow.com/questions/68554713/swiftui-position-an-overlay-relative-to-its-anchor
+                            .alignmentGuide(.bottom) { $0[.top] }
+                            .foregroundStyle(.secondary)
+                    }
+            
         }
         .frame(width: 256, height: 256)
         .onChange(of: timerContext.state) {
