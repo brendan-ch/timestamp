@@ -22,9 +22,21 @@ struct ClockView: View {
     
     var body: some View {
         VStack {
-            Text(displayedTimeRemaining)
-                .font(.system(size: 64))
-                .bold()
+            ZStack {
+                Circle()
+                    .trim(from: 0, to: 0.65)
+                    .stroke(
+                        .blue,
+                        lineWidth: 8
+                    )
+                    .rotationEffect(.degrees(270))
+                    .padding(4)
+                
+                Text(displayedTimeRemaining)
+                    .font(.system(size: 64))
+                    .bold()
+                    .accessibilityLabel("Time remaining")
+            }
         }
         .frame(width: 256, height: 256)
         .onChange(of: timerContext.state) {
