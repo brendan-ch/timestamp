@@ -35,12 +35,13 @@ struct NotificationPermissionSettingView: NotificationsContextView {
                     .foregroundStyle(.red)
             }
         }
+        .task {
+            await initializeNotificationPermissionState()
+        }
     }
     
-    private func initializeNotificationPermissionState() {
-        Task {
-            renderedNotificationPermissionStatus = await notificationsContext.getNotificationPermissionStatus()
-        }
+    private func initializeNotificationPermissionState() async {
+        renderedNotificationPermissionStatus = await notificationsContext.getNotificationPermissionStatus()
     }
     
     private func openNotificationSystemSettingsPane() {

@@ -55,6 +55,10 @@ final class SettingsTests: ClockwiseBaseUITests {
         let systempreferencesApp = XCUIApplication(bundleIdentifier: "com.apple.systempreferences")
         systempreferencesApp.activate()
         XCTAssert(systempreferencesApp.buttons["Clockwise, Off"].waitForExistence(timeout: 5))
+        
+        app.terminate()
+        launchAndOpenSettings()
+        XCTAssert(app.staticTexts["Notification permission: Denied"].waitForExistence(timeout: 5))
     }
     
     func testSetMinutesChangesTimerDisplay() throws {
