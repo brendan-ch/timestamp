@@ -47,6 +47,7 @@ struct ClockView: View {
                         Text(endingTime ?? "")
                             .alignmentGuide(.bottom) { $0[.top] }
                             .foregroundStyle(.secondary)
+                            .accessibilityLabel("Ending time: \(endingTime ?? "N/A")")
                     }
             
         }

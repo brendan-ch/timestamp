@@ -11,9 +11,17 @@ final class TimerTests: ClockwiseBaseUITests {
     func testStartStopTimer() throws {
         appendDefaultTimerLaunchArguments()
         launchAndOpenMenuBarWindow()
+        
         app.buttons["Start"].firstMatch.click()
         
+        let currentDate = Date.now
+        let expectedEndingDate = currentDate.addingTimeInterval(25 * 60)
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "h:mm a"
+        let expectedEndingTimeString = dateFormatter.string(from: expectedEndingDate)
+        
         XCTAssert(app.staticTexts["Time remaining: 25:00"].waitForNonExistence(timeout: 5))
+        XCTAssert(app.staticTexts["Ending time: \(expectedEndingTimeString)"].waitForExistence(timeout: 5))
         
         app.buttons["Stop"].firstMatch.click()
         XCTAssert(app.staticTexts["Time remaining: 25:00"].waitForExistence(timeout: 5))
