@@ -113,4 +113,5 @@ struct ContentView: View {
 #Preview {
     ContentView()
         .environment(TimerContext())
+        .environment(NotificationsContext())
 }
