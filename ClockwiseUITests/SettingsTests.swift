@@ -73,9 +73,9 @@ final class SettingsTests: ClockwiseBaseUITests {
         app.terminate()
         launchAndOpenMenuBarWindow()
         
-        XCTAssert(app.staticTexts["30:00"].waitForExistence(timeout: 5))
+        XCTAssert(app.staticTexts["Time remaining: 30:00"].waitForExistence(timeout: 5))
         app.radioButtons["Break"].tap()
-        XCTAssert(app.staticTexts["15:00"].waitForExistence(timeout: 5))
+        XCTAssert(app.staticTexts["Time remaining: 15:00"].waitForExistence(timeout: 5))
     }
     
     func testInputInvalidMinutesDoesNotSave() throws {

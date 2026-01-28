@@ -13,9 +13,9 @@ final class ContentViewTests: ClockwiseBaseUITests {
         launchAndOpenMenuBarWindow()
 
         app.radioButtons["Break"].firstMatch.click()
-        XCTAssert(app.staticTexts["05:00"].waitForExistence(timeout: 5))
+        XCTAssert(app.staticTexts["Time remaining: 05:00"].waitForExistence(timeout: 5))
         app.radioButtons["Focus"].firstMatch.click()
-        XCTAssert(app.staticTexts["25:00"].waitForExistence(timeout: 5))
+        XCTAssert(app.staticTexts["Time remaining: 25:00"].waitForExistence(timeout: 5))
     }
     
     func testCannotChangeModeDuringTimerRunning() throws {

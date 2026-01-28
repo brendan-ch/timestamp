@@ -42,7 +42,7 @@ struct ClockView: View {
                 Text(displayedTimeRemaining)
                     .font(.system(size: 64))
                     .bold()
-                    .accessibilityLabel("Time remaining")
+                    .accessibilityLabel("Time remaining: \(displayedTimeRemaining)")
                     .overlay(alignment: .bottom) {
                         Text(endingTime ?? "")
                             .alignmentGuide(.bottom) { $0[.top] }
