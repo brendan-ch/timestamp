@@ -26,12 +26,11 @@ struct SettingsView: View {
         .padding()
         .frame(width: 480)
         .task {
+            NSApplication.shared.activate()
             // This code runs regardless of what triggered the settings window to open
-            try? await Task.sleep(for: .milliseconds(20))
             let settingsWindow = NSApp.windows.first { window in
                 window.title == "Clockwise Settings"
             }
-            NSApplication.shared.activate()
             settingsWindow?.orderFront(self)
         }
     }
