@@ -44,13 +44,13 @@ struct ClockView: View {
             update()
         }
         .onAppear {
-            update(animate: false)
+            update()
         }
     }
     
-    private func update(animate isAnimated: Bool = true) {
+    private func update() {
         updateRenderedTimer()
-        updateCircularTrim(animate: isAnimated)
+        updateCircularTrim()
     }
     
     private func updateRenderedTimer() {
@@ -65,16 +65,18 @@ struct ClockView: View {
         }
     }
     
-    private func updateCircularTrim(animate isAnimated: Bool = true) {
+    private func updateCircularTrim() {
         if case .running(let timeRemaining) = timerContext.state {
             if let startingInterval = timerContext.lastTimerStartMetadata?.startingInterval {
                 
-                if isAnimated {
+                let newTrimLevel = timeRemaining / startingInterval
+                
+                if circularTrim - newTrimLevel > 0.02 {
+                    circularTrim = timeRemaining / startingInterval
+                } else {
                     withAnimation {
                         circularTrim = timeRemaining / startingInterval
                     }
-                } else {
-                    circularTrim = timeRemaining / startingInterval
                 }
             }
         } else if case .pending(_) = timerContext.state {
