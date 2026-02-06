@@ -61,11 +61,11 @@ jobs:
       - name: Build and export the app
         run: |
           echo "Archive app"
-          xcodebuild archive -scheme Clockwise -archivePath ./output/Clockwise.xcarchive
+          xcodebuild archive -scheme Timestamp -archivePath ./output/Timestamp.xcarchive
           
-          # The .app file will be under the directory output/Clockwise/Clockwise.app
+          # The .app file will be under the directory output/Timestamp/Timestamp.app
           echo "Export .app from archive"
-          xcodebuild -archivePath output/Clockwise.xcarchive -exportArchive -exportPath output/Clockwise -exportOptionsPlist ExportOptions.plist
+          xcodebuild -archivePath output/Timestamp.xcarchive -exportArchive -exportPath output/Timestamp -exportOptionsPlist ExportOptions.plist
       
       # From https://federicoterzi.com/blog/automatic-code-signing-and-notarization-for-macos-apps-using-github-actions/
       - name: Notarize app bundle
@@ -86,7 +86,7 @@ jobs:
           # notarization service
  
           echo "Creating temp notarization archive"
-          ditto -c -k --keepParent "output/Clockwise/Clockwise.app" "output/notarization.zip"
+          ditto -c -k --keepParent "output/Timestamp/Timestamp.app" "output/notarization.zip"
  
           # Here we send the notarization request to the Apple's Notarization service, waiting for the result.
           # This typically takes a few seconds inside a CI environment, but it might take more depending on the App
@@ -99,10 +99,10 @@ jobs:
           # Finally, we need to "attach the staple" to our executable, which will allow our app to be
           # validated by macOS even when an internet connection is not available.
           echo "Attach staple"
-          xcrun stapler staple "output/Clockwise/Clockwise.app"
+          xcrun stapler staple "output/Timestamp/Timestamp.app"
           
           echo "Create zip file of app"
-          ditto -c -k --keepParent "output/Clockwise/Clockwise.app" "output/app.zip"
+          ditto -c -k --keepParent "output/Timestamp/Timestamp.app" "output/app.zip"
     
       - name: Push release tag
         run: |

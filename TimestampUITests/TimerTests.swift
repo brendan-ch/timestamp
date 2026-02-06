@@ -1,13 +1,13 @@
 //
 //  TimerTests.swift
-//  Clockwise
+//  Timestamp
 //
 //  Created by Brendan Chen on 2026.01.16.
 //
 
 import XCTest
 
-final class TimerTests: ClockwiseBaseUITests {
+final class TimerTests: TimestampBaseUITests {
     func testStartStopTimer() throws {
         appendDefaultTimerLaunchArguments()
         launchAndOpenMenuBarWindow()

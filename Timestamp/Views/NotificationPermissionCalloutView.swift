@@ -1,6 +1,6 @@
 //
 //  NotificationPermissionTooltipView.swift
-//  Clockwise
+//  Timestamp
 //
 //  Created by Brendan Chen on 2026.01.20.
 //

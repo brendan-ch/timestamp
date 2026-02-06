@@ -1,13 +1,13 @@
 //
 //  ContentViewTests.swift
-//  Clockwise
+//  Timestamp
 //
 //  Created by Brendan Chen on 2026.01.16.
 //
 
 import XCTest
 
-final class ContentViewTests: ClockwiseBaseUITests {
+final class ContentViewTests: TimestampBaseUITests {
     func testChangingModeChangesTimer() throws {
         appendDefaultTimerLaunchArguments()
         launchAndOpenMenuBarWindow()
@@ -42,7 +42,7 @@ final class ContentViewTests: ClockwiseBaseUITests {
         app.buttons["Open system notification settings"].firstMatch.click()
         let systempreferencesApp = XCUIApplication(bundleIdentifier: "com.apple.systempreferences")
         systempreferencesApp.activate()
-        XCTAssert(systempreferencesApp.buttons["Clockwise, Off"].waitForExistence(timeout: 5))
+        XCTAssert(systempreferencesApp.buttons["Timestamp, Off"].waitForExistence(timeout: 5))
     }
     
     func testDismissNotificationPermissionCalloutDismissesCallout() throws {

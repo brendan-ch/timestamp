@@ -1,6 +1,6 @@
 //
-//  ClockwiseApp.swift
-//  Clockwise
+//  TimestampApp.swift
+//  Timestamp
 //
 //  Created by Brendan Chen on 2026.01.14.
 //
@@ -9,7 +9,7 @@ import SwiftUI
 import UserNotifications
 
 @main
-struct ClockwiseApp: App {
+struct TimestampApp: App {
     @State private var timerContext = TimerContext()
     @State private var notificationsContext = NotificationsContext()
     @State private var menuBarText: String? = nil

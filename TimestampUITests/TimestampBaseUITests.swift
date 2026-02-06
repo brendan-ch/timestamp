@@ -1,6 +1,6 @@
 //
-//  ClockwiseUITests.swift
-//  ClockwiseUITests
+//  TimestampUITests.swift
+//  TimestampUITests
 //
 //  Created by Brendan Chen on 2026.01.14.
 //
@@ -8,7 +8,7 @@
 import XCTest
 
 @MainActor
-class ClockwiseBaseUITests: XCTestCase {
+class TimestampBaseUITests: XCTestCase {
     var app: XCUIApplication = XCUIApplication()
     
     // MARK: setup
@@ -70,14 +70,14 @@ class ClockwiseBaseUITests: XCTestCase {
             return
         }
         
-        var clockwiseListItem = systempreferencesApp.buttons["Clockwise, Off"]
+        var timestampListItem = systempreferencesApp.buttons["Timestamp, Off"]
         
-        if clockwiseListItem.waitForExistence(timeout: 2) {
-            resetNotificationsForListItem(clockwiseListItem)
+        if timestampListItem.waitForExistence(timeout: 2) {
+            resetNotificationsForListItem(timestampListItem)
         }
-        clockwiseListItem = systempreferencesApp.buttons["Clockwise, Sounds, Desktop"]
-        if clockwiseListItem.waitForExistence(timeout: 2) {
-            resetNotificationsForListItem(clockwiseListItem)
+        timestampListItem = systempreferencesApp.buttons["Timestamp, Sounds, Desktop"]
+        if timestampListItem.waitForExistence(timeout: 2) {
+            resetNotificationsForListItem(timestampListItem)
         }
         
         app.terminate()

@@ -1,12 +1,12 @@
 //
 //  TimerMode+Tests.swift
-//  Clockwise
+//  Timestamp
 //
 //  Created by Brendan Chen on 2026.01.21.
 //
 
 import Testing
-@testable import Clockwise
+@testable import Timestamp
 import Foundation
 internal import UserNotifications
 

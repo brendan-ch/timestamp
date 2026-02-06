@@ -52,7 +52,7 @@ jobs:
 
       - name: Build
         env:
-          scheme: 'Clockwise'
+          scheme: 'Timestamp'
         run: |
           # xcrun xctrace returns via stderr, not the expected stdout (see https://developer.apple.com/forums/thread/663959)
           if [ $scheme = default ]; then scheme=$(cat default); fi
@@ -64,7 +64,7 @@ jobs:
         id: tests
         continue-on-error: true
         env:
-          scheme: 'Clockwise'
+          scheme: 'Timestamp'
         run: |
           # xcrun xctrace returns via stderr, not the expected stdout (see https://developer.apple.com/forums/thread/663959)
           if [ $scheme = default ]; then scheme=$(cat default); fi

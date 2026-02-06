@@ -1,13 +1,13 @@
 //
 //  TimerContext+Tests.swift
-//  Clockwise
+//  Timestamp
 //
 //  Created by Brendan Chen on 2026.01.14.
 //
 
 import Foundation
 import Testing
-@testable import Clockwise
+@testable import Timestamp
 
 @MainActor
 struct TimerContextTests {

@@ -1,13 +1,13 @@
 //
 //  SettingsTests.swift
-//  Clockwise
+//  Timestamp
 //
 //  Created by Brendan Chen on 2026.01.19.
 //
 
 import XCTest
 
-final class SettingsTests: ClockwiseBaseUITests {
+final class SettingsTests: TimestampBaseUITests {
     func testChangeOpenOnLoginSettingPersists() throws {
         // Instead of actually logging the user out/logging them back in, check whether the option stays registered after termination
         launchAndOpenSettings()
@@ -54,7 +54,7 @@ final class SettingsTests: ClockwiseBaseUITests {
         app.buttons["Open system notification settings"].firstMatch.click()
         let systempreferencesApp = XCUIApplication(bundleIdentifier: "com.apple.systempreferences")
         systempreferencesApp.activate()
-        XCTAssert(systempreferencesApp.buttons["Clockwise, Off"].waitForExistence(timeout: 5))
+        XCTAssert(systempreferencesApp.buttons["Timestamp, Off"].waitForExistence(timeout: 5))
         
         app.terminate()
         launchAndOpenSettings()
