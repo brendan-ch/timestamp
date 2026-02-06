@@ -31,27 +31,27 @@
 
 /* Begin PBXFileReference section */
 		20B7822F2F36AFF100E8B3F4 /* Timestamp.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = Timestamp.icon; sourceTree = "<group>"; };
-		20D117A52F1811BE0022CBAF /* Clockwise.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clockwise.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		20D117B22F1811BF0022CBAF /* ClockwiseTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClockwiseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		20D117BC2F1811C00022CBAF /* ClockwiseUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClockwiseUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		20D117A52F1811BE0022CBAF /* Timestamp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Timestamp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		20D117B22F1811BF0022CBAF /* TimestampTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TimestampTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		20D117BC2F1811C00022CBAF /* TimestampUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TimestampUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		20D117FC2F18246A0022CBAF /* ExportOptions.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = ExportOptions.plist; sourceTree = "<group>"; };
 		20D118102F1830CA0022CBAF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		20D117A72F1811BE0022CBAF /* Clockwise */ = {
+		20D117A72F1811BE0022CBAF /* Timestamp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Clockwise;
+			path = Timestamp;
 			sourceTree = "<group>";
 		};
-		20D117B52F1811BF0022CBAF /* ClockwiseTests */ = {
+		20D117B52F1811BF0022CBAF /* TimestampTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ClockwiseTests;
+			path = TimestampTests;
 			sourceTree = "<group>";
 		};
-		20D117BF2F1811C00022CBAF /* ClockwiseUITests */ = {
+		20D117BF2F1811C00022CBAF /* TimestampUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ClockwiseUITests;
+			path = TimestampUITests;
 			sourceTree = "<group>";
 		};
 		20D117D62F1819780022CBAF /* .github */ = {
@@ -92,9 +92,9 @@
 			children = (
 				20D118102F1830CA0022CBAF /* Info.plist */,
 				20D117FC2F18246A0022CBAF /* ExportOptions.plist */,
-				20D117A72F1811BE0022CBAF /* Clockwise */,
-				20D117B52F1811BF0022CBAF /* ClockwiseTests */,
-				20D117BF2F1811C00022CBAF /* ClockwiseUITests */,
+				20D117A72F1811BE0022CBAF /* Timestamp */,
+				20D117B52F1811BF0022CBAF /* TimestampTests */,
+				20D117BF2F1811C00022CBAF /* TimestampUITests */,
 				20D117A62F1811BE0022CBAF /* Products */,
 				20D117D62F1819780022CBAF /* .github */,
 				20B7822F2F36AFF100E8B3F4 /* Timestamp.icon */,
@@ -104,9 +104,9 @@
 		20D117A62F1811BE0022CBAF /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				20D117A52F1811BE0022CBAF /* Clockwise.app */,
-				20D117B22F1811BF0022CBAF /* ClockwiseTests.xctest */,
-				20D117BC2F1811C00022CBAF /* ClockwiseUITests.xctest */,
+				20D117A52F1811BE0022CBAF /* Timestamp.app */,
+				20D117B22F1811BF0022CBAF /* TimestampTests.xctest */,
+				20D117BC2F1811C00022CBAF /* TimestampUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -114,9 +114,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		20D117A42F1811BE0022CBAF /* Clockwise */ = {
+		20D117A42F1811BE0022CBAF /* Timestamp */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 20D117C62F1811C00022CBAF /* Build configuration list for PBXNativeTarget "Clockwise" */;
+			buildConfigurationList = 20D117C62F1811C00022CBAF /* Build configuration list for PBXNativeTarget "Timestamp" */;
 			buildPhases = (
 				20D117A12F1811BE0022CBAF /* Sources */,
 				20D117A22F1811BE0022CBAF /* Frameworks */,
@@ -127,19 +127,19 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				20D117A72F1811BE0022CBAF /* Clockwise */,
+				20D117A72F1811BE0022CBAF /* Timestamp */,
 			);
-			name = Clockwise;
+			name = Timestamp;
 			packageProductDependencies = (
 				20A61BD82F18778900C6866A /* AsyncAlgorithms */,
 			);
 			productName = Clockwise;
-			productReference = 20D117A52F1811BE0022CBAF /* Clockwise.app */;
+			productReference = 20D117A52F1811BE0022CBAF /* Timestamp.app */;
 			productType = "com.apple.product-type.application";
 		};
-		20D117B12F1811BF0022CBAF /* ClockwiseTests */ = {
+		20D117B12F1811BF0022CBAF /* TimestampTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 20D117C92F1811C00022CBAF /* Build configuration list for PBXNativeTarget "ClockwiseTests" */;
+			buildConfigurationList = 20D117C92F1811C00022CBAF /* Build configuration list for PBXNativeTarget "TimestampTests" */;
 			buildPhases = (
 				20D117AE2F1811BF0022CBAF /* Sources */,
 				20D117AF2F1811BF0022CBAF /* Frameworks */,
@@ -151,18 +151,18 @@
 				20D117B42F1811BF0022CBAF /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				20D117B52F1811BF0022CBAF /* ClockwiseTests */,
+				20D117B52F1811BF0022CBAF /* TimestampTests */,
 			);
-			name = ClockwiseTests;
+			name = TimestampTests;
 			packageProductDependencies = (
 			);
 			productName = ClockwiseTests;
-			productReference = 20D117B22F1811BF0022CBAF /* ClockwiseTests.xctest */;
+			productReference = 20D117B22F1811BF0022CBAF /* TimestampTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		20D117BB2F1811C00022CBAF /* ClockwiseUITests */ = {
+		20D117BB2F1811C00022CBAF /* TimestampUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 20D117CC2F1811C00022CBAF /* Build configuration list for PBXNativeTarget "ClockwiseUITests" */;
+			buildConfigurationList = 20D117CC2F1811C00022CBAF /* Build configuration list for PBXNativeTarget "TimestampUITests" */;
 			buildPhases = (
 				20D117B82F1811C00022CBAF /* Sources */,
 				20D117B92F1811C00022CBAF /* Frameworks */,
@@ -174,13 +174,13 @@
 				20D117BE2F1811C00022CBAF /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				20D117BF2F1811C00022CBAF /* ClockwiseUITests */,
+				20D117BF2F1811C00022CBAF /* TimestampUITests */,
 			);
-			name = ClockwiseUITests;
+			name = TimestampUITests;
 			packageProductDependencies = (
 			);
 			productName = ClockwiseUITests;
-			productReference = 20D117BC2F1811C00022CBAF /* ClockwiseUITests.xctest */;
+			productReference = 20D117BC2F1811C00022CBAF /* TimestampUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -206,7 +206,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 20D117A02F1811BE0022CBAF /* Build configuration list for PBXProject "Clockwise" */;
+			buildConfigurationList = 20D117A02F1811BE0022CBAF /* Build configuration list for PBXProject "Timestamp" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -223,9 +223,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				20D117A42F1811BE0022CBAF /* Clockwise */,
-				20D117B12F1811BF0022CBAF /* ClockwiseTests */,
-				20D117BB2F1811C00022CBAF /* ClockwiseUITests */,
+				20D117A42F1811BE0022CBAF /* Timestamp */,
+				20D117B12F1811BF0022CBAF /* TimestampTests */,
+				20D117BB2F1811C00022CBAF /* TimestampUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -283,12 +283,12 @@
 /* Begin PBXTargetDependency section */
 		20D117B42F1811BF0022CBAF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 20D117A42F1811BE0022CBAF /* Clockwise */;
+			target = 20D117A42F1811BE0022CBAF /* Timestamp */;
 			targetProxy = 20D117B32F1811BF0022CBAF /* PBXContainerItemProxy */;
 		};
 		20D117BE2F1811C00022CBAF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 20D117A42F1811BE0022CBAF /* Clockwise */;
+			target = 20D117A42F1811BE0022CBAF /* Timestamp */;
 			targetProxy = 20D117BD2F1811C00022CBAF /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -512,7 +512,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Clockwise.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Clockwise";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Timestamp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Timestamp";
 			};
 			name = Debug;
 		};
@@ -536,7 +536,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Clockwise.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Clockwise";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Timestamp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Timestamp";
 			};
 			name = Release;
 		};
@@ -591,7 +591,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		20D117A02F1811BE0022CBAF /* Build configuration list for PBXProject "Clockwise" */ = {
+		20D117A02F1811BE0022CBAF /* Build configuration list for PBXProject "Timestamp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				20D117C42F1811C00022CBAF /* Debug */,
@@ -600,7 +600,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		20D117C62F1811C00022CBAF /* Build configuration list for PBXNativeTarget "Clockwise" */ = {
+		20D117C62F1811C00022CBAF /* Build configuration list for PBXNativeTarget "Timestamp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				20D117C72F1811C00022CBAF /* Debug */,
@@ -609,7 +609,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		20D117C92F1811C00022CBAF /* Build configuration list for PBXNativeTarget "ClockwiseTests" */ = {
+		20D117C92F1811C00022CBAF /* Build configuration list for PBXNativeTarget "TimestampTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				20D117CA2F1811C00022CBAF /* Debug */,
@@ -618,7 +618,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		20D117CC2F1811C00022CBAF /* Build configuration list for PBXNativeTarget "ClockwiseUITests" */ = {
+		20D117CC2F1811C00022CBAF /* Build configuration list for PBXNativeTarget "TimestampUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				20D117CD2F1811C00022CBAF /* Debug */,
