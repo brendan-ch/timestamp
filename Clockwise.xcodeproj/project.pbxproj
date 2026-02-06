@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		20A61BD92F18778900C6866A /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 20A61BD82F18778900C6866A /* AsyncAlgorithms */; };
+		20B782302F36AFF100E8B3F4 /* Timestamp.icon in Resources */ = {isa = PBXBuildFile; fileRef = 20B7822F2F36AFF100E8B3F4 /* Timestamp.icon */; };
 		20D117FD2F18246A0022CBAF /* ExportOptions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 20D117FC2F18246A0022CBAF /* ExportOptions.plist */; };
 /* End PBXBuildFile section */
 
@@ -29,6 +30,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		20B7822F2F36AFF100E8B3F4 /* Timestamp.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = Timestamp.icon; sourceTree = "<group>"; };
 		20D117A52F1811BE0022CBAF /* Clockwise.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clockwise.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		20D117B22F1811BF0022CBAF /* ClockwiseTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClockwiseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		20D117BC2F1811C00022CBAF /* ClockwiseUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClockwiseUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -95,6 +97,7 @@
 				20D117BF2F1811C00022CBAF /* ClockwiseUITests */,
 				20D117A62F1811BE0022CBAF /* Products */,
 				20D117D62F1819780022CBAF /* .github */,
+				20B7822F2F36AFF100E8B3F4 /* Timestamp.icon */,
 			);
 			sourceTree = "<group>";
 		};
@@ -233,6 +236,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				20D117FD2F18246A0022CBAF /* ExportOptions.plist in Resources */,
+				20B782302F36AFF100E8B3F4 /* Timestamp.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -413,7 +417,7 @@
 		20D117C72F1811C00022CBAF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = Timestamp;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
@@ -427,6 +431,8 @@
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Timestamp;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -450,7 +456,7 @@
 		20D117C82F1811C00022CBAF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = Timestamp;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
@@ -464,6 +470,8 @@
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Timestamp;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
