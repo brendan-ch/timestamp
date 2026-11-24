@@ -79,6 +79,7 @@ internal class TimerContext {
     private func setTimerUpdateTask(metadata: TimerStartMetadata) throws {
         let timerSequence = try getTimerSequence()
         
+        timerUpdateTask?.cancel()
         timerUpdateTask = Task {
             for await _ in timerSequence {
                 if !Task.isCancelled, case .running(_) = state {
@@ -123,6 +124,9 @@ internal class TimerContext {
             
             state = .pending(mode: wasBecauseTimerExpired ? currentTimerMode.next() : currentTimerMode)
             lastTimerStopMetadata = .init(mode: currentTimerMode, wasBecauseTimerExpired: wasBecauseTimerExpired, recordedAt: recordedAt)
+            
+            timerUpdateTask?.cancel()
+            timerUpdateTask = nil
         } else {
             throw TimerContextError.timerNotRunning
         }
