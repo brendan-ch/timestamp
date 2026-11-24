@@ -150,5 +150,35 @@ struct TimerContextTests {
             try context.stop()
         }
     }
+    
+    @Test("stop followed immediately by start leaves only one timer running")
+    func stopThenImmediateStartLeavesOnlyOneTimerRunning() async throws {
+        let suiteName = #function
+        let defaults = UserDefaults(suiteName: suiteName)!
+        defaults.removePersistentDomain(forName: suiteName)
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+        defaults.set(4, forKey: UserDefaults.focusIntervalSeconds)
+        
+        let context = TimerContext(userDefaults: defaults)
+        try context.start()
+        try? await Task.sleep(for: .seconds(2))
+        try context.stop()
+        try context.start()
+        
+        // A stale update task from the first start would expire the restarted
+        // timer early at ~t=5 (based on the original start time). With only the
+        // new task running, the timer is still running here.
+        try? await Task.sleep(for: .seconds(3.5))
+        if case .running(let timeRemaining) = context.state {
+            #expect(timeRemaining > 0.5 && timeRemaining < 2.0)
+        } else {
+            Issue.record("State is not .running: \(context.state)")
+        }
+        
+        // The restarted timer (started ~2s in, 4s interval) expires and
+        // switches to the next mode.
+        try? await Task.sleep(for: .seconds(2.5))
+        #expect(context.state == .pending(mode: .breakMode))
+    }
 }
 
