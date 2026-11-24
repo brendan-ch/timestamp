@@ -120,7 +120,7 @@ struct ContentView: View {
     
     private func openSettingsWindow() {
         openWindow(id: "settings")
-        NSApp.bringToFront()
+        NSApp.bringToFront(windowTitle: "Timestamp Settings")
     }
     
     private func quit() {

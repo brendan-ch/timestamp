@@ -86,7 +86,7 @@ private struct NotificationClickWindowOpener: View {
         Color.clear
             .onChange(of: notificationsContext.notificationClickCount) {
                 openWindow(id: "main")
-                NSApp.bringToFront()
+                NSApp.bringToFront(windowTitle: "Timestamp")
             }
     }
 }
