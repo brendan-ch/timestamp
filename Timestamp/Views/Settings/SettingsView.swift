@@ -25,14 +25,6 @@ struct SettingsView: View {
         }
         .padding()
         .frame(width: 480)
-        .task {
-            NSApplication.shared.activate()
-            // This code runs regardless of what triggered the settings window to open
-            let settingsWindow = NSApp.windows.first { window in
-                window.title == "Timestamp Settings"
-            }
-            settingsWindow?.orderFront(self)
-        }
     }
 }
 

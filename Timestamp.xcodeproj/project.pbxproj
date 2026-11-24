@@ -560,7 +560,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TEST_TARGET_NAME = Clockwise;
+				TEST_TARGET_NAME = Timestamp;
 			};
 			name = Debug;
 		};
@@ -584,7 +584,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TEST_TARGET_NAME = Clockwise;
+				TEST_TARGET_NAME = Timestamp;
 			};
 			name = Release;
 		};

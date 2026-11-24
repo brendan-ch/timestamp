@@ -19,6 +19,10 @@ struct TimestampApp: App {
             ContentView()
                 .environment(timerContext)
                 .environment(notificationsContext)
+                .background {
+                    NotificationClickWindowOpener()
+                        .environment(notificationsContext)
+                }
         } label: {
             HStack {
                 Image(systemName: "hourglass")
@@ -35,8 +39,20 @@ struct TimestampApp: App {
             scheduleNotificationIfTimerHasEnded()
         }
         
-        Settings(content: SettingsView.init)
-            .environment(notificationsContext)
+        Window("Timestamp", id: "main") {
+            ContentView()
+                .environment(timerContext)
+                .environment(notificationsContext)
+        }
+        .defaultLaunchBehavior(.suppressed)
+        .restorationBehavior(.disabled)
+        
+        Window("Timestamp Settings", id: "settings") {
+            SettingsView()
+                .environment(notificationsContext)
+        }
+        .defaultLaunchBehavior(.suppressed)
+        .restorationBehavior(.disabled)
     }
     
     private func updateMenuBarText() {
@@ -59,5 +75,18 @@ struct TimestampApp: App {
                 notificationsContext.scheduleIfHasPermission(request)
             }
         }
+    }
+}
+
+private struct NotificationClickWindowOpener: View {
+    @Environment(NotificationsContext.self) private var notificationsContext
+    @Environment(\.openWindow) private var openWindow
+    
+    var body: some View {
+        Color.clear
+            .onChange(of: notificationsContext.notificationClickCount) {
+                openWindow(id: "main")
+                NSApp.bringToFront()
+            }
     }
 }
