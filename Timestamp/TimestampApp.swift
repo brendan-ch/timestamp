@@ -19,16 +19,16 @@ struct TimestampApp: App {
             ContentView()
                 .environment(timerContext)
                 .environment(notificationsContext)
-                .background {
-                    NotificationClickWindowOpener()
-                        .environment(notificationsContext)
-                }
         } label: {
             HStack {
                 Image(systemName: "hourglass")
                 if let menuBarText = menuBarText {
                     Text(menuBarText)
                 }
+            }
+            .background {
+                MainWindowLifecycleObserver()
+                    .environment(notificationsContext)
             }
         }
         .menuBarExtraStyle(.window)
@@ -40,12 +40,14 @@ struct TimestampApp: App {
         }
         
         Window("Timestamp", id: "main") {
-            ContentView()
+            ContentView(fitsWindowToContent: true)
                 .environment(timerContext)
                 .environment(notificationsContext)
+                .fixedSize(horizontal: false, vertical: true)
         }
         .defaultLaunchBehavior(.suppressed)
         .restorationBehavior(.disabled)
+        .windowResizability(.contentSize)
         
         Window("Timestamp Settings", id: "settings") {
             SettingsView()
@@ -53,6 +55,7 @@ struct TimestampApp: App {
         }
         .defaultLaunchBehavior(.suppressed)
         .restorationBehavior(.disabled)
+        .windowResizability(.contentSize)
     }
     
     private func updateMenuBarText() {
@@ -78,15 +81,24 @@ struct TimestampApp: App {
     }
 }
 
-private struct NotificationClickWindowOpener: View {
+private struct MainWindowLifecycleObserver: View {
     @Environment(NotificationsContext.self) private var notificationsContext
     @Environment(\.openWindow) private var openWindow
     
     var body: some View {
         Color.clear
-            .onChange(of: notificationsContext.notificationClickCount) {
-                openWindow(id: "main")
-                NSApp.bringToFront(windowTitle: "Timestamp")
+            .onAppear {
+                if UserDefaults.standard.bool(forKey: "openMainWindow") {
+                    openMainWindow()
+                }
             }
+            .onChange(of: notificationsContext.notificationClickCount) {
+                openMainWindow()
+            }
+    }
+    
+    private func openMainWindow() {
+        openWindow(id: "main")
+        NSApp.bringToFront(windowTitle: "Timestamp")
     }
 }

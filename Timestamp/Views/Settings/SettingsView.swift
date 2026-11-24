@@ -25,6 +25,7 @@ struct SettingsView: View {
         }
         .padding()
         .frame(width: 480)
+        .fixedSize(horizontal: false, vertical: true)
     }
 }
 

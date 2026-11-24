@@ -9,6 +9,8 @@ import SwiftUI
 import UserNotifications
 
 struct ContentView: View {
+    var fitsWindowToContent = false
+    
     @Environment(TimerContext.self) private var timerContext
     
     @Environment(\.openWindow) private var openWindow
@@ -17,11 +19,14 @@ struct ContentView: View {
     /// Must be kept in sync manually with the timer context.
     @State private var timerModeSelection: TimerMode = .focusMode
     
-    @State private var hideGrantNotificationPermissionCallout = false {
+    @State private var hideGrantNotificationPermissionCallout = UserDefaults.standard.bool(forKey: UserDefaults.hideGrantNotificationPermissionCallout) {
         didSet {
             UserDefaults.standard.set(hideGrantNotificationPermissionCallout, forKey: UserDefaults.hideGrantNotificationPermissionCallout)
         }
     }
+    
+    @State private var calloutHeight: CGFloat = 0
+    @State private var hostWindow: NSWindow? = nil
     
     private var isRunning: Bool {
         switch timerContext.state {
@@ -78,9 +83,12 @@ struct ContentView: View {
             .frame(minHeight: 32)
             
             if !hideGrantNotificationPermissionCallout {
-                NotificationPermissionCalloutView() {
-                    hideGrantNotificationPermissionCallout = true
-                }
+                NotificationPermissionCalloutView(onDismiss: dismissCallout)
+                    .onGeometryChange(for: CGFloat.self) { proxy in
+                        proxy.size.height
+                    } action: { height in
+                        calloutHeight = height
+                    }
             }
             
             ClockView()
@@ -103,9 +111,6 @@ struct ContentView: View {
                 .keyboardShortcut(.space, modifiers: [])
             }
         }
-        .onAppear {
-            hideGrantNotificationPermissionCallout = UserDefaults.standard.bool(forKey: UserDefaults.hideGrantNotificationPermissionCallout)
-        }
         .onChange(of: timerModeSelection) {
             try? timerContext.updatePendingTimerFromProvidedMode(timerModeSelection)
         }
@@ -116,6 +121,25 @@ struct ContentView: View {
         }
         .padding()
         .frame(width: 320)
+        .background {
+            HostWindowReader { window in
+                hostWindow = window
+            }
+        }
+    }
+    
+    private func dismissCallout() {
+        hideGrantNotificationPermissionCallout = true
+        shrinkWindowToContent()
+    }
+    
+    private func shrinkWindowToContent() {
+        guard fitsWindowToContent, let window = hostWindow, calloutHeight > 0 else { return }
+        var frame = window.frame
+        frame.origin.y += calloutHeight
+        frame.size.height -= calloutHeight
+        window.setFrame(frame, display: true)
+        calloutHeight = 0
     }
     
     private func openSettingsWindow() {
@@ -126,6 +150,28 @@ struct ContentView: View {
     private func quit() {
         NSApp.terminate(nil)
     }
+}
+
+private struct HostWindowReader: NSViewRepresentable {
+    final class HostView: NSView {
+        var onWindow: ((NSWindow?) -> Void)?
+        
+        override func viewDidMoveToWindow() {
+            DispatchQueue.main.async {
+                self.onWindow?(self.window)
+            }
+        }
+    }
+    
+    let onWindow: (NSWindow?) -> Void
+    
+    func makeNSView(context: Context) -> NSView {
+        let view = HostView()
+        view.onWindow = onWindow
+        return view
+    }
+    
+    func updateNSView(_ nsView: NSView, context: Context) {}
 }
 
 #Preview {
