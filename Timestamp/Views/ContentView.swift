@@ -11,7 +11,7 @@ import UserNotifications
 struct ContentView: View {
     @Environment(TimerContext.self) private var timerContext
     
-    @Environment(\.openSettings) private var openSettings
+    @Environment(\.openWindow) private var openWindow
     
     /// The timer mode selection to show in the UI.
     /// Must be kept in sync manually with the timer context.
@@ -57,9 +57,17 @@ struct ContentView: View {
                 }
                 Spacer()
                 
+                Button {
+                    openSettingsWindow()
+                } label: {
+                    EmptyView()
+                }
+                .hidden()
+                .keyboardShortcut(",", modifiers: .command)
+                
                 Menu {
                     Button("Settings") {
-                        openSettings()
+                        openSettingsWindow()
                     }
                     Button("Quit", action: quit)
                 } label: {
@@ -95,9 +103,6 @@ struct ContentView: View {
                 .keyboardShortcut(.space, modifiers: [])
             }
         }
-        .onAppear {
-            hideGrantNotificationPermissionCallout = UserDefaults.standard.bool(forKey: UserDefaults.hideGrantNotificationPermissionCallout)
-        }
         .onChange(of: timerModeSelection) {
             try? timerContext.updatePendingTimerFromProvidedMode(timerModeSelection)
         }
@@ -108,6 +113,11 @@ struct ContentView: View {
         }
         .padding()
         .frame(width: 320)
+    }
+    
+    private func openSettingsWindow() {
+        openWindow(id: "settings")
+        NSApp.bringToFront(windowTitle: "Timestamp Settings")
     }
     
     private func quit() {

@@ -35,8 +35,13 @@ struct TimestampApp: App {
             scheduleNotificationIfTimerHasEnded()
         }
         
-        Settings(content: SettingsView.init)
-            .environment(notificationsContext)
+        Window("Timestamp Settings", id: "settings") {
+            SettingsView()
+                .environment(notificationsContext)
+        }
+        .defaultLaunchBehavior(.suppressed)
+        .restorationBehavior(.disabled)
+        .windowResizability(.contentSize)
     }
     
     private func updateMenuBarText() {

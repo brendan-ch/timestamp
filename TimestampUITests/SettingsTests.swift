@@ -78,7 +78,7 @@ final class SettingsTests: TimestampBaseUITests {
         launchAndOpenMenuBarWindow()
         
         XCTAssert(app.staticTexts["Time remaining: 30:00"].waitForExistence(timeout: 5))
-        app.radioButtons["Break"].tap()
+        app.radioButtons["Break"].click()
         XCTAssert(app.staticTexts["Time remaining: 15:00"].waitForExistence(timeout: 5))
     }
     
