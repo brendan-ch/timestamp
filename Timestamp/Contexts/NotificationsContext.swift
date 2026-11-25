@@ -11,8 +11,6 @@ import UserNotifications
 
 @Observable
 class NotificationsContext: NSObject, UNUserNotificationCenterDelegate {
-    private(set) var notificationClickCount = 0
-    
     private var notificationCenter = UNUserNotificationCenter.current()
     
     override init() {
@@ -45,8 +43,10 @@ class NotificationsContext: NSObject, UNUserNotificationCenterDelegate {
     
     // MARK: Responding to notification clicks
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
-        await MainActor.run {
-            notificationClickCount += 1
-        }
+        // "Click" the status bar item
+        // See https://stackoverflow.com/questions/74986904/how-do-i-show-the-menu-bar-window-programmatically-in-swiftui
+        let statusItem = NSApp.windows.first?.value(forKey: "statusItem") as? NSStatusItem
+        statusItem?.button?.performClick(nil)
+        NSApplication.shared.activate()
     }
 }

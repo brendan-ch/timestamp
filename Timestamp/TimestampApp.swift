@@ -26,10 +26,6 @@ struct TimestampApp: App {
                     Text(menuBarText)
                 }
             }
-            .background {
-                MainWindowLifecycleObserver()
-                    .environment(notificationsContext)
-            }
         }
         .menuBarExtraStyle(.window)
         .onChange(of: timerContext.state) {
@@ -38,16 +34,6 @@ struct TimestampApp: App {
         .onChange(of: timerContext.lastTimerStopMetadata) {
             scheduleNotificationIfTimerHasEnded()
         }
-        
-        Window("Timestamp", id: "main") {
-            ContentView(fitsWindowToContent: true)
-                .environment(timerContext)
-                .environment(notificationsContext)
-                .fixedSize(horizontal: false, vertical: true)
-        }
-        .defaultLaunchBehavior(.suppressed)
-        .restorationBehavior(.disabled)
-        .windowResizability(.contentSize)
         
         Window("Timestamp Settings", id: "settings") {
             SettingsView()
@@ -78,27 +64,5 @@ struct TimestampApp: App {
                 notificationsContext.scheduleIfHasPermission(request)
             }
         }
-    }
-}
-
-private struct MainWindowLifecycleObserver: View {
-    @Environment(NotificationsContext.self) private var notificationsContext
-    @Environment(\.openWindow) private var openWindow
-    
-    var body: some View {
-        Color.clear
-            .onAppear {
-                if UserDefaults.standard.bool(forKey: "openMainWindow") {
-                    openMainWindow()
-                }
-            }
-            .onChange(of: notificationsContext.notificationClickCount) {
-                openMainWindow()
-            }
-    }
-    
-    private func openMainWindow() {
-        openWindow(id: "main")
-        NSApp.bringToFront(windowTitle: "Timestamp")
     }
 }
